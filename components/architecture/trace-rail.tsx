@@ -11,22 +11,32 @@ import { TRACE_STAGES } from "@/lib/content";
  * Tudo em CSS, sem JavaScript:
  *  - a linha se preenche conforme a rolagem, via animation-timeline: scroll();
  *  - dois pulsos descem por ela em laço, que é o que a faz parecer monitorada;
- *  - sem suporte a scroll-driven animations, a linha aparece preenchida e só o
- *    progresso se perde.
+ *  - cada estágio aparece e some conforme a rolagem passa por ele, via
+ *    animation-timeline: view(), como um trace que vai sendo lido;
+ *  - sem suporte a scroll-driven animations, a linha aparece preenchida e os
+ *    estágios ficam visíveis, sem entrada progressiva.
  *
  * Decorativa, então aria-hidden. Os estágios existem como marcação visual da
  * jornada, não como índice navegável.
- *
- * Posição: 40px à esquerda da coluna de conteúdo, com piso de 8px para não
- * encostar na borda em tela estreita. O nome do estágio só aparece quando há
- * gutter suficiente para ele; abaixo disso fica só o número.
  */
+
+/**
+ * Distância entre o trilho e a coluna de conteúdo.
+ *
+ * Os rótulos crescem para a esquerda a partir do trilho, então cada nível de
+ * detalhe só é exibido quando sobra largura real para ele. Os limiares abaixo
+ * saem dessa conta: com o trilho a `OFFSET` da coluna, o nome precisa de uma
+ * viewport a partir de ~1560px e a linha de tecnologias, de ~1760px. Abaixo
+ * disso fica só o número, que cabe em qualquer gutter.
+ */
+const OFFSET = 88;
+
 export function TraceRail() {
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none absolute inset-y-0 z-0 hidden w-px sm:block"
-      style={{ left: "max(0.5rem, calc(50% - 600px - 40px))" }}
+      style={{ left: `max(0.5rem, calc(50% - 600px - ${OFFSET}px))` }}
     >
       {/* Trilho apagado: o caminho inteiro, sempre visível. */}
       <div className="absolute inset-0 bg-border-soft" />
@@ -42,35 +52,34 @@ export function TraceRail() {
         style={{ animationDelay: "3.5s" }}
       />
 
-      {TRACE_STAGES.map((stage, index) => {
-        const top = `${((index + 0.5) / TRACE_STAGES.length) * 100}%`;
-        return (
-          <div key={stage.name}>
-            {/* `right-full` ancora o bloco inteiramente à esquerda do trilho.
-                Ancorado no próprio trilho, o texto crescia para a direita e
-                invadia a coluna de conteúdo. */}
-            <div
-              className="absolute right-full mr-3 flex flex-col items-end gap-0.5 text-right"
-              style={{ top, transform: "translateY(-50%)" }}
-            >
-              <span className="font-mono text-[0.5625rem] tracking-[0.16em] text-primary-soft/70">
-                {stage.index}
-              </span>
-              <span className="hidden whitespace-nowrap font-mono text-[0.5625rem] tracking-[0.16em] text-faint xl:block">
-                {stage.name}
-              </span>
-              <span className="hidden whitespace-nowrap font-mono text-[0.5rem] text-faint/70 2xl:block">
-                {stage.tech.join(" · ")}
-              </span>
-            </div>
+      {TRACE_STAGES.map((stage, index) => (
+        <div
+          key={stage.name}
+          // O centro vertical sai de margin, e não de translateY: a animação
+          // usa transform, e um translate aqui seria sobrescrito por ela.
+          className="trace-stage absolute inset-x-0 -mt-2"
+          style={{ top: `${((index + 0.5) / TRACE_STAGES.length) * 100}%` }}
+        >
+          <span className="absolute left-1/2 top-2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/70 ring-2 ring-bg" />
 
-            <span
-              className="absolute left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/70 ring-2 ring-bg"
-              style={{ top }}
-            />
+          {/* `right-full` ancora o bloco inteiramente à esquerda do trilho.
+              Cada nível só aparece a partir da largura em que cabe de verdade,
+              medida no navegador: abaixo de 1480px nem o número cabia e ele
+              vazava para fora da tela. Sem texto, sobra a linha com os nós, que
+              precisa de 1px. */}
+          <div className="absolute right-full mr-4 hidden flex-col items-end gap-0.5 text-right min-[1480px]:flex">
+            <span className="font-mono text-[0.5625rem] tracking-[0.16em] text-primary-soft/70">
+              {stage.index}
+            </span>
+            <span className="hidden whitespace-nowrap font-mono text-[0.5625rem] tracking-[0.16em] text-faint min-[1560px]:block">
+              {stage.name}
+            </span>
+            <span className="hidden whitespace-nowrap font-mono text-[0.5rem] text-faint/70 min-[1760px]:block">
+              {stage.tech.join(" · ")}
+            </span>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }

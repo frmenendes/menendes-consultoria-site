@@ -268,6 +268,18 @@
     animation: trace-rail-pulse 7s linear infinite;
   }
 
+  /* Estágio da trilha: entra quando a rolagem se aproxima dele e sai quando
+     passa, como um trace sendo lido. A janela é a travessia inteira pela
+     viewport, então a transição é lenta e o efeito fica discreto: em nenhum
+     momento o rótulo pisca ou disputa atenção com o texto ao lado. */
+  @supports (animation-timeline: view()) {
+    .trace-stage {
+      animation: trace-stage-in linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+
   /* Barras de telemetria. Cada uma recebe duração e atraso próprios no
      componente, então o conjunto nunca cai em sincronia. */
   .signal-bar {
@@ -317,6 +329,22 @@
 @keyframes trace-rail-fill {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
+}
+
+@keyframes trace-stage-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  24%,
+  76% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
 }
 
 @keyframes trace-rail-pulse {

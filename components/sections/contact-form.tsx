@@ -127,24 +127,52 @@ export function ContactForm() {
 
       <div>
         <Label htmlFor="challenge">Tipo de desafio</Label>
-        <select
-          id="challenge"
-          name="challenge"
-          defaultValue=""
-          required
-          aria-invalid={Boolean(errors.challenge)}
-          aria-describedby={errors.challenge ? "challenge-error" : undefined}
-          className={cn(FIELD, errors.challenge && "border-danger")}
-        >
-          <option value="" disabled>
-            Selecione
-          </option>
-          {CHALLENGE_TYPES.map((type) => (
-            <option key={type} value={type}>
-              {type}
+        {/* O seletor nativo do navegador não aceita estilo na lista aberta, mas
+            aceita a seta: escondemos a padrão e desenhamos a nossa, para o campo
+            ficar igual aos demais. A lista em si sai escura porque o documento
+            declara color-scheme: dark. */}
+        <div className="relative">
+          <select
+            id="challenge"
+            name="challenge"
+            defaultValue=""
+            required
+            aria-invalid={Boolean(errors.challenge)}
+            aria-describedby={errors.challenge ? "challenge-error" : undefined}
+            className={cn(
+              FIELD,
+              "peer cursor-pointer appearance-none pr-11",
+              // Enquanto nada foi escolhido, o texto fica apagado como um
+              // placeholder. Depois da escolha, ganha a cor normal.
+              "text-fg has-[option[value='']:checked]:text-faint",
+              errors.challenge && "border-danger",
+            )}
+          >
+            <option value="" disabled>
+              Selecione
             </option>
-          ))}
-        </select>
+            {CHALLENGE_TYPES.map((type) => (
+              <option key={type} value={type} className="bg-surface text-fg">
+                {type}
+              </option>
+            ))}
+          </select>
+
+          <svg
+            aria-hidden="true"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted transition-colors peer-focus:text-primary"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
         <FieldError id="challenge-error" message={errors.challenge} />
       </div>
 
