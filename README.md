@@ -130,6 +130,34 @@ tempo de preenchimento, rate limit por IP (3 mensagens por minuto, via binding
 nativo do Workers) e envio via Resend. Honeypot e tempo respondem `200` sem enviar nada, de propósito:
 avisar o robô de que foi detectado só ajuda quem está automatizando.
 
+## Consentimento e medição
+
+Mesma abordagem do `lupewedding-site`: escolha por finalidade guardada com a
+versão da política, Consent Mode v2 inicializado antes de qualquer tag, e uma
+âncora (`/privacidade#privacidade-preferencias`, no rodapé) que reabre o banner
+para revogar.
+
+Duas diferenças, e elas vêm do fato de a MENENDES não usar GTM, Google Analytics
+nem anúncios:
+
+- existe **uma finalidade só**, medição, porque é a única coisa que há para
+  consentir. Expor uma chave de publicidade que não controlaria nada seria um
+  banner que finge escolha, o que é pior que banner nenhum;
+- essa finalidade **controla de fato** o carregamento do Cloudflare Web
+  Analytics, que só entra na página depois do aceite.
+
+Para o controle valer em produção:
+
+1. no painel da Cloudflare, em Web Analytics, **desligue o "Automatic Setup"**.
+   Com ele ligado, a borda injeta o beacon antes de qualquer consentimento e o
+   componente vira enfeite;
+2. informe o token do site em `NEXT_PUBLIC_CF_BEACON_TOKEN`. Sem token, nada é
+   carregado e o banner segue funcionando para tags futuras.
+
+Ao mudar o texto de privacidade de forma relevante, incremente
+`PRIVACY_VERSION` em `lib/consent.ts`: quem já decidiu volta a ver o banner, em
+vez de herdar em silêncio um consentimento dado sobre outro texto.
+
 ## Pendências antes de publicar
 
 - [ ] Confirmar `contato@menendes.com.br` como caixa de destino e remetente
@@ -138,3 +166,4 @@ avisar o robô de que foi detectado só ajuda quem está automatizando.
 - [ ] Criar a imagem Open Graph em `public/og.png` (1200x630) e referenciá-la em
       `app/layout.tsx`.
 - [ ] Definir os secrets do Resend no Worker (ver acima).
+- [ ] Desligar o Automatic Setup do Web Analytics e definir `NEXT_PUBLIC_CF_BEACON_TOKEN`.

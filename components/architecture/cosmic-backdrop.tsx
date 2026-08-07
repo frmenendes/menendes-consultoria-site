@@ -12,13 +12,16 @@
  */
 export function CosmicBackdrop() {
   return (
+    // A camada passa do fim do wrapper e some por máscara. Terminando na borda
+    // exata, a transição para o rodapé virava um corte seco: medido, o fundo
+    // acabava no mesmo pixel em que o rodapé começava.
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none absolute inset-x-0 -bottom-48 top-0 -z-10 overflow-hidden [mask-image:linear-gradient(to_bottom,#000_0%,#000_84%,transparent_100%)]"
     >
-      {/* Estrelas. Densidade baixa e esmaecidas no rodapé, para não competir
-          com o texto na parte de baixo da página. */}
-      <div className="starfield absolute inset-0 opacity-[0.35] [mask-image:linear-gradient(to_bottom,#000_0%,#000_60%,transparent_100%)]" />
+      {/* Estrelas. Densidade baixa e já esmaecidas antes do fim, para não
+          competir com o texto na parte de baixo da página. */}
+      <div className="starfield absolute inset-0 opacity-[0.35] [mask-image:linear-gradient(to_bottom,#000_0%,#000_55%,transparent_92%)]" />
 
       {/* Nebulosas. Posições e tamanhos diferentes para o fundo nunca repetir
           o mesmo desenho ao rolar. */}

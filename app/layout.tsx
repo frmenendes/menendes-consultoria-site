@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { SiteHeader } from "@/components/sections/site-header";
 import { SiteFooter } from "@/components/sections/site-footer";
+import { ConsentBanner } from "@/components/ui/consent-banner";
+import { WebAnalytics } from "@/components/ui/web-analytics";
 import { SITE } from "@/lib/site";
 import "@/styles/globals.css";
 
@@ -97,6 +99,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/*
+          Consent Mode v2. Precisa rodar antes de qualquer tag do Google, então
+          é inline e sem defer. Sem decisão salva, tudo nega: não presumimos
+          consentimento por região.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=JSON.parse(localStorage.getItem("menendes_consent_v1")||"null");var m=!!(s&&s.measurement);window.dataLayer=window.dataLayer||[];window.dataLayer.push(["consent","default",{analytics_storage:m?"granted":"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied",functionality_storage:"granted",security_storage:"granted",wait_for_update:500}]);}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-dvh antialiased">
         <a
           href="#conteudo"
@@ -107,6 +121,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="conteudo">{children}</main>
         <SiteFooter />
+        <ConsentBanner />
+        <WebAnalytics />
         <script
           type="application/ld+json"
           // JSON-LD é dado estático definido acima, não entrada de usuário.

@@ -4,3 +4,7 @@
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_FROM=Site MENENDES <contato@mail.menendes.com.br>
 CONTACT_TO=destinatario@exemplo.com
+
+# Token do Cloudflare Web Analytics. Sem ele, nenhum beacon é carregado.
+# Exige desligar o Automatic Setup no painel, senão a borda injeta antes do consentimento.
+NEXT_PUBLIC_CF_BEACON_TOKEN=

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/page-hero";
 import { Section } from "@/components/ui/section";
 import { SITE } from "@/lib/site";
+import { CONSENT_HASH } from "@/lib/consent";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade",
@@ -21,7 +22,7 @@ export default function PrivacidadePage() {
         label="Legal"
         title="Política de"
         accent="Privacidade"
-        body="Última atualização: agosto de 2026."
+        body="Última atualização: 7 de agosto de 2026."
       />
 
       <Section>
@@ -71,10 +72,32 @@ export default function PrivacidadePage() {
             <h2 className={TITLE}>Cookies e medição</h2>
             <p className={BODY}>
               Este site não utiliza cookies de publicidade, não faz perfilamento e não
-              carrega rastreadores de terceiros. Por isso não exibimos banner de
-              consentimento: não há o que consentir. Caso alguma ferramenta de medição
-              venha a ser adotada, esta política será atualizada e o consentimento será
-              solicitado antes de qualquer carregamento.
+              constrói perfil individual de quem navega.
+            </p>
+            <p className={BODY}>
+              A única medição é o Cloudflare Web Analytics, que produz contagem agregada
+              de visitas sem cookie e sem identificar o visitante. Ainda assim, ele só é
+              carregado depois do seu aceite: enquanto você não decidir, nenhum script de
+              medição entra na página. Recusar não limita nada, e nenhuma funcionalidade
+              do site depende dessa escolha.
+            </p>
+            <p className={BODY}>
+              Sua decisão fica guardada no seu próprio navegador e pode ser alterada a
+              qualquer momento em{" "}
+              <a
+                href={`/privacidade${CONSENT_HASH}`}
+                className="text-primary-soft underline underline-offset-2"
+              >
+                preferências de privacidade
+              </a>
+              . A revogação passa a valer na navegação seguinte. Se esta política mudar de
+              forma relevante, o pedido de consentimento é refeito, em vez de herdarmos em
+              silêncio uma decisão tomada sobre outro texto.
+            </p>
+            <p className={BODY}>
+              Não usamos Google Analytics, Google Ads nem gerenciador de tags. Caso algum
+              deles venha a ser adotado, o controle já existente passa a governá-lo e esta
+              política será atualizada antes de qualquer carregamento.
             </p>
           </section>
 

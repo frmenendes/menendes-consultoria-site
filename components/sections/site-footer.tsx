@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { NAV, SITE, whatsappUrl } from "@/lib/site";
 
-const LEGAL = [{ href: "/privacidade", label: "Política de Privacidade" }];
+import { CONSENT_HASH } from "@/lib/consent";
+
+const LEGAL = [
+  { href: "/privacidade", label: "Política de Privacidade" },
+  // A âncora reabre o banner de qualquer página: revogar precisa ser tão
+  // fácil quanto consentir.
+  { href: `/privacidade${CONSENT_HASH}`, label: "Preferências de privacidade" },
+];
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
