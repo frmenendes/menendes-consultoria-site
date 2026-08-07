@@ -250,6 +250,24 @@
   }
 }
 
+/* Varredura do painel HUD. Uma faixa fina descendo em laço, como um sensor
+   relendo o quadro. Percorre 100% da altura do painel usando a própria altura
+   como unidade: a faixa mede 12% dele, então 833% é uma travessia inteira. */
+@keyframes hud-sweep {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  8%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(833%);
+    opacity: 0;
+  }
+}
+
 @keyframes star-pulse {
   from {
     opacity: 0.25;
@@ -357,6 +375,10 @@
       animation-timeline: view();
       animation-range: entry 0% cover 22%;
     }
+  }
+
+  .hud-sweep {
+    animation: hud-sweep 9s linear infinite;
   }
 
   .star-pulse {

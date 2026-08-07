@@ -1,3 +1,5 @@
+import { GalaxyField } from "@/components/architecture/galaxy-field";
+
 /**
  * Fundo cósmico.
  *
@@ -60,8 +62,13 @@ function Nebula({
  * documento: sem esta transição, o campo de estrelas aparece de uma vez sobre a
  * borda da seção anterior e desenha a mesma linha reta que o resto do trabalho
  * está tentando eliminar.
+ *
+ * `galaxy` acrescenta a camada em WebGL por cima das estrelas em CSS.
  */
-export function CosmicBackdrop({ fadeTop = false }: { fadeTop?: boolean } = {}) {
+export function CosmicBackdrop({
+  fadeTop = false,
+  galaxy = false,
+}: { fadeTop?: boolean; galaxy?: boolean } = {}) {
   const mask = fadeTop
     ? "linear-gradient(to bottom,transparent 0%,#000 9%,#000 84%,transparent 100%)"
     : "linear-gradient(to bottom,#000 0%,#000 84%,transparent 100%)";
@@ -75,9 +82,19 @@ export function CosmicBackdrop({ fadeTop = false }: { fadeTop?: boolean } = {}) 
       className="pointer-events-none absolute inset-x-0 -bottom-48 top-0 -z-10 overflow-hidden"
       style={{ maskImage: mask, WebkitMaskImage: mask }}
     >
-      {/* Estrelas. Densidade baixa e já esmaecidas antes do fim, para não
-          competir com o texto na parte de baixo da página. */}
+      {/* Estrelas em CSS. Densidade baixa e já esmaecidas antes do fim, para
+          não competir com o texto na parte de baixo da página.
+          Continuam existindo mesmo com a galáxia em WebGL por cima: são o
+          estado de fallback, e o que aparece sob prefers-reduced-motion ou sem
+          suporte a WebGL. */}
       <div className="starfield absolute inset-0 opacity-[0.35] [mask-image:linear-gradient(to_bottom,#000_0%,#000_55%,transparent_92%)]" />
+
+      {/* Galáxia. Só onde é pedida: ela é a camada mais cara do site, e existe
+          para dizer que a tecnologia não acaba no que já se conhece — o que faz
+          sentido na página sobre IA, e seria só barulho numa lista de serviços. */}
+      {galaxy ? (
+        <GalaxyField className="absolute inset-0 h-full w-full opacity-40" />
+      ) : null}
 
       {/* Nebulosas. Posições, tamanhos e fases de deriva diferentes, para o
           fundo nunca repetir o mesmo desenho ao rolar nem pulsar em bloco. */}

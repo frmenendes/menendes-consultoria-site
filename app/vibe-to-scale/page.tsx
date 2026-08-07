@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArchitectureTransformation } from "@/components/architecture/architecture-transformation";
 import { CosmicBackdrop, SeamGlow } from "@/components/architecture/cosmic-backdrop";
+import { HudFrame } from "@/components/architecture/hud-frame";
 import { CallToAction } from "@/components/sections/cta";
 import { PageHero } from "@/components/sections/page-hero";
 import { StructuredData } from "@/components/ui/structured-data";
@@ -42,7 +43,7 @@ export default function VibeToScalePage() {
           propósito: aquele já tem fundo próprio (blueprint mais glow), e
           sobrepor os dois só empasta a área do título. */}
       <div className="relative">
-        <CosmicBackdrop fadeTop />
+        <CosmicBackdrop fadeTop galaxy />
 
         {/* Costura no lugar da borda que havia aqui: a página entra no
             fundo estelar por luz, não por régua de 1px. */}
@@ -57,48 +58,54 @@ export default function VibeToScalePage() {
               body="Nenhum destes itens é falha de quem construiu. São consequências previsíveis de otimizar para velocidade de validação, que é exatamente o que a primeira versão precisava fazer."
             />
 
-            {/* Constelação de diagnóstico. As células ficam translúcidas para o
-                campo de estrelas atravessar o painel: é o que transforma uma
-                tabela num pedaço de céu. O nó ao lado de cada número pisca com
-                período próprio, espalhado pela razão áurea — em sincronia, doze
-                pontos leem como painel de LED, não como céu. */}
-            <ul className="mt-12 grid gap-px overflow-hidden rounded-card border border-border bg-border/60 sm:grid-cols-2 lg:grid-cols-3">
-              {VIBE_PROBLEMS.map((problem, index) => {
-                const fase = (index * 0.618) % 1;
-                return (
+            {/* Painel de diagnóstico.
+                A grade é a leitura certa para doze itens: dá começo, fim e
+                permite varrer a lista de uma vez. Duas tentativas anteriores
+                falharam por atacar isso — soltar os itens no fundo estelar
+                virou uma lista à deriva, e uma varredura animada descendo pelo
+                painel lia como linha quebrada, não como sensor.
+
+                Então a estrutura da tabela fica, e o acréscimo é só estático:
+                cabeçalho de instrumento, e colchetes de canto que acendem no
+                item sob o cursor. Nada se move aqui — o movimento da página
+                vive no fundo, atrás, onde não disputa com texto.
+
+                As células são opacas de propósito. Translúcidas, o campo de
+                estrelas passava por trás do texto e custava legibilidade: é a
+                mesma regra que rege o resto do site, luz no fundo e nunca sob
+                corpo de texto. */}
+            <div className="mt-14 overflow-hidden rounded-card border border-border">
+              <div className="flex items-center justify-between border-b border-border bg-surface-2/80 px-5 py-3 font-mono text-[0.5625rem] tracking-[0.18em] text-faint">
+                <span className="text-primary-soft">DIAGNOSTIC_SCAN</span>
+                <span>{VIBE_PROBLEMS.length} ACHADOS</span>
+              </div>
+
+              <ul className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+                {VIBE_PROBLEMS.map((problem, index) => (
                   <li
                     key={problem}
-                    className="constellation-cell group relative bg-surface/45 p-5 transition-colors duration-500 hover:bg-surface/80"
+                    className="group relative bg-surface p-5 transition-colors duration-300 hover:bg-surface-2"
                   >
-                    {/* Halo de foco: só no hover, e nascendo no nó. */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                      style={{
-                        background:
-                          "radial-gradient(70% 70% at 18% 24% in oklab, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent 70%)",
-                      }}
-                    />
-                    <div className="relative flex items-center gap-2">
+                    <div className="absolute inset-2.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <HudFrame tone="active" />
+                    </div>
+
+                    <div className="relative flex items-center gap-2.5">
                       <span
                         aria-hidden="true"
-                        className="star-pulse h-1 w-1 rounded-full bg-primary-soft"
-                        style={{
-                          animationDuration: `${2.4 + fase * 2.6}s`,
-                          // Atraso negativo: a estrela já entra no meio do
-                          // ciclo, em vez de todas começarem apagadas juntas.
-                          animationDelay: `-${fase * 3}s`,
-                        }}
+                        className="h-1 w-1 rounded-full bg-primary-soft/50 transition-colors duration-300 group-hover:bg-primary-soft"
                       />
-                      <span className="font-mono text-[0.625rem] text-warning">
+                      <span className="font-mono text-[0.625rem] tracking-[0.16em] text-warning">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                     </div>
-                    <p className="relative mt-2 text-sm text-fg-soft">{problem}</p>
+                    <p className="relative mt-2.5 text-sm text-fg-soft transition-colors duration-300 group-hover:text-fg">
+                      {problem}
+                    </p>
                   </li>
-                );
-              })}
-            </ul>
+                ))}
+              </ul>
+            </div>
           </div>
         </Section>
 
