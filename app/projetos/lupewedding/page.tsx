@@ -71,21 +71,35 @@ export default function LupeWeddingPage() {
 
   return (
     <>
+      {/* O nome do cliente vai para o rótulo, não para o título.
+          Antes, `title` era "LupeWedding" e `accent` era a frase inteira, e o
+          PageHero os emenda com um espaço: o <h1> saía como "LupeWedding Um
+          produto digital construído..." — duas frases coladas, sem pontuação
+          entre elas. Agora o título é uma oração só, e o gradiente cai sobre a
+          parte que carrega a ideia, como no resto do site. */}
       <PageHero
-        label="Produtos digitais"
-        title="LupeWedding"
-        accent="Um produto digital construído da visão de negócio à arquitetura."
+        label="Produtos digitais · LupeWedding"
+        title="Um produto digital construído"
+        accent="da visão de negócio à arquitetura."
         body="Prova de capacidade de produto, não apenas de entrega técnica. Concepção, engenharia, operação e evolução conduzidas de ponta a ponta."
       />
 
       <Section>
-        <div className="shell-narrow">
-          <Reveal>
-            <p className="text-lg text-fg-soft">{project.context}</p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <p className="mt-6 text-lg text-fg-soft">{project.challenge}</p>
-          </Reveal>
+        <div className="shell">
+          {/* Coluna de leitura alinhada ao MESMO eixo do resto da página.
+              Antes era `shell-narrow`, que é centralizado com 760px enquanto o
+              `shell` tem 1200px: como os dois são centralizados, as bordas
+              esquerdas ficam a 220px uma da outra, e o texto saltava para a
+              direita e voltava a cada seção. Agora a largura de leitura é um
+              limite dentro do shell, não outro container. */}
+          <div className="max-w-[46rem]">
+            <Reveal>
+              <p className="text-lg text-fg-soft">{project.context}</p>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <p className="mt-6 text-lg text-fg-soft">{project.challenge}</p>
+            </Reveal>
+          </div>
         </div>
       </Section>
 
@@ -146,8 +160,9 @@ export default function LupeWeddingPage() {
       </Section>
 
       <Section className="border-t border-border">
-        <div className="shell-narrow">
-          <Reveal className="edge rounded-panel border border-border bg-surface/60 p-8 md:p-10">
+        <div className="shell">
+          <div className="max-w-[46rem]">
+            <Reveal className="edge rounded-panel border border-border bg-surface/60 p-8 md:p-10">
             <h2 className="mono-label text-primary-soft">Uso de inteligência artificial</h2>
             <p className="mt-5 text-xl leading-snug text-fg md:text-2xl">
               A inteligência artificial acelerou partes da construção. Engenharia de
@@ -158,32 +173,35 @@ export default function LupeWeddingPage() {
               É a mesma tese que sustenta o Vibe to Scale, testada no produto da própria
               casa antes de ser oferecida a alguém.
             </p>
-            <ButtonLink href="/vibe-to-scale" variant="outline" className="group mt-8">
-              Conhecer Vibe to Scale
-              <ArrowRight />
-            </ButtonLink>
-          </Reveal>
+              <ButtonLink href="/vibe-to-scale" variant="outline" className="group mt-8">
+                Conhecer Vibe to Scale
+                <ArrowRight />
+              </ButtonLink>
+            </Reveal>
+          </div>
         </div>
       </Section>
 
       <Section className="border-t border-border">
-        <div className="shell-narrow">
-          <SectionHeading label="Tecnologias" title="Stack" accent="do produto." />
-          <Reveal className="mt-8 flex flex-wrap gap-2">
-            {project.stack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-border bg-surface px-4 py-2 font-mono text-[0.6875rem] text-fg-soft"
-              >
-                {tech}
-              </span>
-            ))}
-          </Reveal>
-          <Reveal className="mt-10">
-            <ButtonLink href="https://lupewedding.com.br" external variant="outline">
-              Visitar lupewedding.com.br
-            </ButtonLink>
-          </Reveal>
+        <div className="shell">
+          <div className="max-w-[46rem]">
+            <SectionHeading label="Tecnologias" title="Stack" accent="do produto." />
+            <Reveal className="mt-8 flex flex-wrap gap-2">
+              {project.stack.map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-full border border-border bg-surface px-4 py-2 font-mono text-[0.6875rem] text-fg-soft"
+                >
+                  {tech}
+                </span>
+              ))}
+            </Reveal>
+            <Reveal className="mt-10">
+              <ButtonLink href="https://lupewedding.com.br" external variant="outline">
+                Visitar lupewedding.com.br
+              </ButtonLink>
+            </Reveal>
+          </div>
         </div>
       </Section>
 
