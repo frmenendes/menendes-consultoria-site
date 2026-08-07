@@ -1,31 +1,44 @@
-import { CodeDiff, CostChart, ReliabilityChart } from "@/components/architecture/code-diff";
+import { CodeDiff } from "@/components/architecture/code-diff";
+import {
+  ChartPanel,
+  CostChart,
+  LatencyChart,
+  ReliabilityChart,
+} from "@/components/architecture/chart-panel";
+import { Section, SectionHeading } from "@/components/ui/section";
 
 /**
  * Painéis que se sobrepõem durante a rolagem.
  *
  * A referência é a home do GitHub: cada bloco gruda no topo e o seguinte sobe
  * por cima dele, de modo que a narrativa se empilha em vez de simplesmente
- * passar. Aqui os três painéis contam a mesma história em três linguagens —
- * código, custo e confiabilidade —, que é a sequência que a MENENDES vende:
- * primeiro a arquitetura muda, depois a conta muda, depois a operação para de
- * acordar de madrugada.
+ * passar. Os quatro painéis contam a mesma história em quatro linguagens —
+ * código, custo, latência e incidentes —, que é a sequência que a MENENDES
+ * vende: a arquitetura muda, a conta muda, o sistema responde, e a operação
+ * para de acordar de madrugada.
  *
- * ── Como funciona, e por que não tem biblioteca ───────────────────────────
+ * ── Como funciona, e por que não tem biblioteca de scroll ─────────────────
  *
  * `position: sticky` e nada mais. Cada painel gruda a uma distância do topo
  * ligeiramente maior que a do anterior, então quando o segundo alcança o
- * primeiro ele para 12px abaixo — é essa diferença que produz a pilha visível
+ * primeiro ele para logo abaixo — é essa diferença que produz a pilha visível
  * de bordas, em vez de um painel tapando o outro por completo.
  *
  * Sem scroll-jacking, e isso é deliberado: bibliotecas do gênero sequestram a
  * rolagem, quebram o scroll do teclado e da barra lateral, e custam caro em
- * INP, que é justamente um dos Core Web Vitals que o trabalho de SEO deste
- * site está protegendo. Com sticky, a rolagem continua sendo a do navegador: é
- * o compositor que faz o trabalho, não o JavaScript. Não há um único listener
- * de scroll nesta seção.
+ * INP, que é um dos Core Web Vitals que o trabalho de SEO deste site protege.
+ * Com sticky, a rolagem continua sendo a do navegador, e o trabalho é do
+ * compositor. Não há um único listener de scroll nesta seção.
  *
- * Sob `prefers-reduced-motion` nada precisa ser desligado, porque nada anima
- * por tempo — o único movimento é o da própria rolagem, que o usuário controla.
+ * Sob `prefers-reduced-motion` não há nada a desligar: o único movimento é o da
+ * própria rolagem, que o usuário controla.
+ *
+ * ── Espaçamento ───────────────────────────────────────────────────────────
+ *
+ * A seção usa `Section` e `SectionHeading`, os mesmos primitivos do resto da
+ * home, em vez de paddings próprios. A versão anterior repetia os valores à
+ * mão, e valor repetido à mão é valor que sai do lugar na primeira mudança de
+ * ritmo do site.
  */
 
 type Etapa = {
@@ -40,7 +53,7 @@ const ETAPAS: readonly Etapa[] = [
   {
     indice: "01",
     rotulo: "Arquitetura",
-    titulo: "A mesma rota, com fronteira.",
+    titulo: "A mesma rota, agora com fronteira.",
     corpo: "O que uma ferramenta de geração entrega funciona na demonstração. O que falta nela é autorização, isolamento entre clientes e uma fronteira entre rota e dados — e é isso que decide se o sistema aguenta o primeiro cliente grande.",
     visual: <CodeDiff />,
   },
@@ -48,52 +61,64 @@ const ETAPAS: readonly Etapa[] = [
     indice: "02",
     rotulo: "FinOps",
     titulo: "A conta para de crescer sozinha.",
-    corpo: "Custo de nuvem raramente se resolve na fatura. Ele é definido no acoplamento, no modelo de dados e no que roda de forma síncrona sem precisar. Corrigida a arquitetura, a curva muda de inclinação.",
-    visual: <CostChart />,
+    corpo: "Custo de nuvem raramente se resolve na fatura. Ele é definido no acoplamento, no modelo de dados e no que roda de forma síncrona sem precisar. Corrigida a arquitetura, a curva muda de inclinação em vez de continuar subindo.",
+    visual: (
+      <ChartPanel titulo="CUSTO DE INFRAESTRUTURA · ÍNDICE" destaque="BASE 100">
+        <CostChart />
+      </ChartPanel>
+    ),
   },
   {
     indice: "03",
+    rotulo: "Performance",
+    titulo: "O sistema responde sob carga.",
+    corpo: "Cache, filas e processamento assíncrono deixam de ser otimização pontual e viram parte do desenho. A latência de cauda, que é a que o cliente sente, deixa de depender do dia.",
+    visual: (
+      <ChartPanel titulo="LATÊNCIA p95" destaque="ms">
+        <LatencyChart />
+      </ChartPanel>
+    ),
+  },
+  {
+    indice: "04",
     rotulo: "Confiabilidade",
     titulo: "A operação para de apagar incêndio.",
     corpo: "Disponibilidade não vem de esperança, vem de instrumentação. Com o sistema observável, o incidente deixa de ser descoberto pelo cliente e passa a ser detectado, diagnosticado e recuperado.",
-    visual: <ReliabilityChart />,
+    visual: (
+      <ChartPanel titulo="INCIDENTES POR MÊS" destaque="12 MESES">
+        <ReliabilityChart />
+      </ChartPanel>
+    ),
   },
 ];
 
 export function ScrollStack() {
   return (
-    <section aria-labelledby="pilha-titulo" className="py-16 md:py-24">
+    <Section>
       <div className="shell">
-        <div className="max-w-2xl">
-          <span className="mono-label text-primary-soft">Como a mudança aparece</span>
-          <h2 id="pilha-titulo" className="mt-4 text-3xl md:text-[2.6rem]">
-            Três formas de olhar
-            <span className="text-gradient"> para a mesma decisão.</span>
-          </h2>
-          <p className="mt-5 text-fg-soft md:text-lg">
-            Uma decisão de arquitetura não se justifica sozinha. Ela precisa aparecer
-            no código, na conta do mês e no sono de quem opera.
-          </p>
-        </div>
+        <SectionHeading
+          label="Como a mudança aparece"
+          title="Quatro formas de olhar"
+          accent="para a mesma decisão."
+          body="Uma decisão de arquitetura não se justifica sozinha. Ela precisa aparecer no código, na conta do mês, no tempo de resposta e no sono de quem opera."
+        />
 
-        {/* A pilha. Cada painel gruda 12px abaixo do anterior, e é essa
+        {/* A pilha. Cada painel gruda um pouco abaixo do anterior, e é essa
             diferença que deixa a borda do de baixo à mostra. */}
-        <div className="mt-16 flex flex-col gap-8">
+        <div className="mt-14 flex flex-col gap-6">
           {ETAPAS.map((etapa, index) => (
             <article
               key={etapa.indice}
-              className="edge sticky overflow-hidden rounded-panel border border-border bg-surface/85 backdrop-blur-sm"
+              className="edge sticky overflow-hidden rounded-panel border border-border bg-surface/90 backdrop-blur-sm"
               style={{
-                // `top` cresce com o índice: o painel 2 para abaixo do 1, e
-                // assim por diante. Em rem para acompanhar o zoom do usuário.
-                top: `calc(var(--nav-h) + ${1.5 + index * 0.75}rem)`,
-                // Sem z-index explícito: na ordem do documento, o painel
-                // seguinte já pinta por cima do anterior, que é o empilhamento
-                // desejado. Declarar z-index aqui só criaria contexto de
-                // empilhamento sem necessidade.
+                // Em rem para acompanhar o zoom, e somado à altura da barra
+                // fixa para o painel não grudar atrás dela.
+                top: `calc(var(--nav-h) + ${1.25 + index * 0.7}rem)`,
+                // Sem z-index: na ordem do documento o painel seguinte já pinta
+                // por cima do anterior, que é o empilhamento desejado.
               }}
             >
-              <div className="grid gap-8 p-7 md:p-10 lg:grid-cols-[1fr_1.15fr] lg:items-center lg:gap-12">
+              <div className="grid gap-8 p-7 md:p-9 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-12">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-[0.625rem] tracking-[0.16em] text-faint">
@@ -111,6 +136,6 @@ export function ScrollStack() {
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
