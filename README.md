@@ -13,38 +13,57 @@ npm install
 cp .dev.vars.example .dev.vars   # e preencha os secrets
 npm run dev                      # http://localhost:8124
 npm run check                    # typecheck + lint
-npm run build                    # build do Next
+npm run build                    # build do OpenNext (é o que o CI roda)
 npm run preview                  # build + workerd local (runtime real)
 ```
 
-`npm run dev` já expõe os bindings do Worker (KV e secrets do `.dev.vars`) via
+`npm run dev` já expõe os bindings do Worker (rate limit e secrets do `.dev.vars`) via
 `initOpenNextCloudflareForDev`.
 
 ## Deploy
 
+O deploy é automático pelo **Workers Builds** a cada push na `main`, com as
+configurações padrão do painel:
+
+| Campo               | Valor              |
+| ------------------- | ------------------ |
+| Comando da build    | `npm run build`    |
+| Comando de deploy   | `npx wrangler deploy` |
+
+Isso funciona porque **`npm run build` é `opennextjs-cloudflare build`**, e não
+`next build`. O `wrangler deploy` detecta o projeto OpenNext e delega para
+`opennextjs-cloudflare deploy`, que exige a config compilada em `.open-next`.
+Com `next build` puro o deploy falha com *"Could not find compiled Open Next
+config"*.
+
+Para não cair em recursão (o adapter chama `npm run build` por padrão para
+construir o Next), `open-next.config.ts` fixa `buildCommand: "npx next build"`.
+
+Deploy manual, se precisar:
+
 ```bash
-npm run deploy      # opennextjs-cloudflare build + deploy
+npm run deploy
 ```
 
-> **Não use `wrangler dev` ou `wrangler deploy` direto.** O comando do adapter
-> roda um passo extra, `populateCache`, que copia o HTML pré-renderizado para os
-> assets do Worker. Sem ele, as rotas geradas por `generateStaticParams`
-> (`/insights/[slug]`) respondem **404** em produção.
+> **Nunca use `wrangler deploy` sem passar pelo `npm run build` antes.** O
+> comando do adapter roda um passo extra, `populateCache`, que copia o HTML
+> pré-renderizado para os assets do Worker. Sem ele, as rotas geradas por
+> `generateStaticParams` (`/insights/[slug]`) respondem **404** em produção.
 
 ### Antes do primeiro deploy
 
-1. **Criar o namespace KV** do rate limit e colar o id em `wrangler.jsonc`
-   (hoje há um marcador `0000...`):
-   ```bash
-   npx wrangler kv namespace create RATE_LIMIT
-   ```
-2. **Definir os secrets** (nunca versionados):
+O rate limit usa o **binding nativo do Workers**, configurado só no
+`wrangler.jsonc`, então não há recurso para criar na conta. Falta apenas:
+
+1. **Definir os secrets** (nunca versionados). Sem eles o site sobe e funciona,
+   mas o formulário responde 503 orientando o visitante a usar o e-mail do
+   rodapé:
    ```bash
    npx wrangler secret put RESEND_API_KEY
    npx wrangler secret put CONTACT_TO
    npx wrangler secret put CONTACT_FROM
    ```
-3. Apontar o domínio `menendes.com.br` para o Worker no painel da Cloudflare.
+2. Apontar o domínio `menendes.com.br` para o Worker no painel da Cloudflare.
 
 ## Estrutura
 
@@ -95,8 +114,8 @@ assíncrono que avalia biblioteca de cliente no passo de SSR e quebra o prerende
 ## Formulário de contato
 
 `POST /api/contato` faz, nesta ordem: validação com zod, honeypot, checagem de
-tempo de preenchimento, rate limit por IP em KV (3 mensagens por 10 minutos) e
-envio via Resend. Honeypot e tempo respondem `200` sem enviar nada, de propósito:
+tempo de preenchimento, rate limit por IP (3 mensagens por minuto, via binding
+nativo do Workers) e envio via Resend. Honeypot e tempo respondem `200` sem enviar nada, de propósito:
 avisar o robô de que foi detectado só ajuda quem está automatizando.
 
 ## Pendências antes de publicar
@@ -106,4 +125,4 @@ avisar o robô de que foi detectado só ajuda quem está automatizando.
 - [ ] Confirmar as URLs de LinkedIn e GitHub em `SITE.social` (hoje marcadores).
 - [ ] Criar a imagem Open Graph em `public/og.png` (1200x630) e referenciá-la em
       `app/layout.tsx`.
-- [ ] Criar o namespace KV e definir os secrets (ver acima).
+- [ ] Definir os secrets do Resend no Worker (ver acima).

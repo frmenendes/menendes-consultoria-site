@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "menendes-site",
+  "name": "menendes-consultoria-site",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-07-17",
   // nodejs_compat é obrigatório para o adapter do Next rodar no Workers.
@@ -10,15 +10,16 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "kv_namespaces": [
+  // Rate limit nativo do Workers para o formulário de contato.
+  // Escolhido no lugar de KV justamente por não exigir a criação de um recurso
+  // na conta: o namespace_id é um número arbitrário, não um id de namespace
+  // real, então o deploy funciona sem passo manual anterior.
+  // O período é limitado pela plataforma a 10 ou 60 segundos.
+  "ratelimits": [
     {
-      // Rate limit do formulário de contato (chave por IP, TTL curto).
-      // ATENÇÃO: o id abaixo é um marcador. Antes do primeiro deploy, rodar
-      //   wrangler kv namespace create RATE_LIMIT
-      // e substituir pelo id retornado. Em execução local o miniflare cria um
-      // namespace próprio e ignora este valor.
-      "binding": "RATE_LIMIT",
-      "id": "00000000000000000000000000000000"
+      "name": "CONTACT_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 3, "period": 60 }
     }
   ],
   "vars": {
@@ -28,4 +29,6 @@
   //   RESEND_API_KEY  — chave da API do Resend
   //   CONTACT_TO      — e-mail que recebe as mensagens do formulário
   //   CONTACT_FROM    — remetente verificado no Resend
+  // Sem eles o endpoint responde 503 com mensagem orientando o visitante a
+  // usar o e-mail do rodapé, em vez de falhar em silêncio.
 }

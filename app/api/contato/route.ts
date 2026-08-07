@@ -6,9 +6,6 @@ export const runtime = "nodejs";
 /** Endpoint com efeito colateral: nunca pode ser pré-renderizado nem cacheado. */
 export const dynamic = "force-dynamic";
 
-/** Janela e teto do rate limit por IP. */
-const WINDOW_SECONDS = 600;
-const MAX_PER_WINDOW = 3;
 /** Formulário preenchido em menos que isso é robô, não pessoa. */
 const MIN_FILL_MS = 3000;
 
@@ -74,17 +71,15 @@ export async function POST(request: Request): Promise<Response> {
   // Rate limit por IP. CF-Connecting-IP é preenchido pela borda da Cloudflare e
   // não pode ser forjado pelo cliente.
   const ip = request.headers.get("CF-Connecting-IP") ?? "desconhecido";
-  const kv = env.RATE_LIMIT;
-  if (kv) {
-    const key = `contato:${ip}`;
-    const current = Number((await kv.get(key)) ?? 0);
-    if (current >= MAX_PER_WINDOW) {
+  const limiter = env.CONTACT_RATE_LIMIT;
+  if (limiter) {
+    const { success } = await limiter.limit({ key: `contato:${ip}` });
+    if (!success) {
       return json(
-        { ok: false, error: "Muitas mensagens em pouco tempo. Tente novamente mais tarde." },
+        { ok: false, error: "Muitas mensagens em pouco tempo. Tente novamente em instantes." },
         429,
       );
     }
-    await kv.put(key, String(current + 1), { expirationTtl: WINDOW_SECONDS });
   }
 
   const apiKey = env.RESEND_API_KEY;

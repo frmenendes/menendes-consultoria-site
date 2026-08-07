@@ -14,6 +14,18 @@ import staticAssetsIncrementalCache from "@opennextjs/cloudflare/overrides/incre
  * Se um dia existir ISR ou revalidação sob demanda, trocar por
  * r2IncrementalCache ou kvIncrementalCache.
  */
-export default defineCloudflareConfig({
+const cloudflareConfig = defineCloudflareConfig({
   incrementalCache: staticAssetsIncrementalCache,
 });
+
+const config = {
+  ...cloudflareConfig,
+  /**
+   * Precisa ser explícito. Sem isto o adapter chama `npm run build` para
+   * construir o Next, e como o `build` do package.json é justamente
+   * `opennextjs-cloudflare build`, o processo chamaria a si mesmo em laço.
+   */
+  buildCommand: "npx next build",
+};
+
+export default config;

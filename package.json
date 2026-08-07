@@ -4,13 +4,15 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev --port 8124",
-    "build": "next build",
+    "//build": "Gera o bundle do OpenNext, não só o do Next. O CI da Cloudflare roda `npm run build` e em seguida `wrangler deploy`, que delega para `opennextjs-cloudflare deploy` e exige a config compilada em .open-next.",
+    "build": "opennextjs-cloudflare build",
+    "build:next": "next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preview": "opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
