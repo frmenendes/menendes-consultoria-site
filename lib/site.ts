@@ -34,7 +34,7 @@ export const whatsappUrl = (
 export type NavItem = { href: string; label: string };
 
 export const NAV: readonly NavItem[] = [
-  { href: "/servicos", label: "Expertise" },
+  { href: "/servicos", label: "Soluções" },
   { href: "/vibe-to-scale", label: "Vibe to Scale" },
   { href: "/projetos", label: "Projetos" },
   { href: "/sobre", label: "Sobre" },

@@ -39,7 +39,7 @@ export function Hero() {
             <Reveal mode="load" delay={0.24}>
               <div className="mt-9 flex flex-wrap gap-3">
                 <ButtonLink href="/projetos" className="group">
-                  Conheça os projetos
+                  Conheça alguns dos projetos
                   <ArrowRight />
                 </ButtonLink>
                 <ButtonLink href="/contato" variant="outline">

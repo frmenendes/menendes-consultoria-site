@@ -30,7 +30,7 @@ const PATHS: readonly Path[] = [
     eyebrow: "Para empresas",
     title: "Sistemas críticos exigem decisões melhores.",
     body: "Arquitetura, cloud, SRE, segurança, DevSecOps, observabilidade, FinOps, dados e governança para empresas que precisam operar com confiança.",
-    cta: "Explorar expertise corporativa",
+    cta: "Explorar soluções corporativas",
     href: "/servicos",
   },
   {

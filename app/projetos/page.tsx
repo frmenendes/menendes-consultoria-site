@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ProjectReveal } from "@/components/architecture/project-reveal";
 import { CallToAction } from "@/components/sections/cta";
 import { PageHero } from "@/components/sections/page-hero";
+import { StructuredData } from "@/components/ui/structured-data";
+import { breadcrumbSchema } from "@/lib/structured-data";
 import { Reveal } from "@/components/motion/reveal";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { PRIOR_WORK, PROJECT_CATEGORIES } from "@/lib/content";
@@ -16,6 +18,9 @@ export const metadata: Metadata = {
 export default function ProjetosPage() {
   return (
     <>
+      <StructuredData
+        graph={[breadcrumbSchema([{ name: "Projetos", path: "/projetos" }])]}
+      />
       <PageHero
         label="Projetos"
         title="Contexto, decisão"

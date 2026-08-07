@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CallToAction } from "@/components/sections/cta";
 import { INSIGHT_BODIES } from "@/content/insights/registry";
 import { INSIGHTS, formatInsightDate, getInsight } from "@/lib/insights";
+import { StructuredData } from "@/components/ui/structured-data";
+import { articleSchema, breadcrumbSchema } from "@/lib/structured-data";
 import { SITE } from "@/lib/site";
 
 type Params = { slug: string };
@@ -46,19 +48,17 @@ export default async function InsightPage({ params }: { params: Promise<Params> 
   const Body = INSIGHT_BODIES[slug];
   if (!Body) notFound();
 
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    headline: insight.title,
-    description: insight.summary,
-    datePublished: insight.date,
-    author: { "@type": "Organization", name: SITE.name },
-    publisher: { "@type": "Organization", name: SITE.name },
-    mainEntityOfPage: `${SITE.url}/insights/${insight.slug}`,
-  };
-
   return (
     <>
+      <StructuredData
+        graph={[
+          articleSchema(insight),
+          breadcrumbSchema([
+            { name: "Menendes Lab", path: "/insights" },
+            { name: insight.title, path: `/insights/${insight.slug}` },
+          ]),
+        ]}
+      />
       <article className="pt-[calc(var(--nav-h)+4.5rem)]">
         <header className="shell-narrow">
           <Link
@@ -102,10 +102,6 @@ export default async function InsightPage({ params }: { params: Promise<Params> 
         body="Se algum ponto acima descreve o que está acontecendo no seu ambiente, vale uma conversa."
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
     </>
   );
 }

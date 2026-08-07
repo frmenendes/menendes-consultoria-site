@@ -35,13 +35,28 @@ import type { NextConfig } from "next";
  */
 const CF_INSIGHTS = "https://static.cloudflareinsights.com";
 
+/**
+ * Google Analytics 4. Só carrega depois do consentimento de medição (ver
+ * `components/ui/google-analytics.tsx`), mas a CSP é estática e precisa
+ * permitir as origens de antemão: uma política que só liberasse após o aceite
+ * teria de ser dinâmica, e isso custaria SSR em todas as rotas.
+ *
+ * `googletagmanager.com` serve o gtag.js; a coleta vai para
+ * `google-analytics.com` e para os endpoints regionais `*.analytics.google.com`.
+ * O `img-src` cobre o fallback por pixel, usado quando o navegador bloqueia o
+ * envio por fetch.
+ */
+const GA_SCRIPT = "https://www.googletagmanager.com";
+const GA_COLLECT =
+  "https://www.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://*.google-analytics.com";
+
 const CSP = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' ${CF_INSIGHTS}`,
+  `script-src 'self' 'unsafe-inline' ${CF_INSIGHTS} ${GA_SCRIPT}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob: ${GA_SCRIPT} ${GA_COLLECT}`,
   "font-src 'self' data:",
-  `connect-src 'self' ${CF_INSIGHTS} https://cloudflareinsights.com`,
+  `connect-src 'self' ${CF_INSIGHTS} https://cloudflareinsights.com ${GA_SCRIPT} ${GA_COLLECT}`,
   "form-action 'self'",
   // 'self' em vez de 'none': clickjacking exige uma origem diferente, então
   // same-origin continua seguro, e isso permite abrir o site dentro de um

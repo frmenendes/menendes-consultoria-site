@@ -152,9 +152,16 @@
 
   /* Costura luminosa entre seções. É a faixa clara que dá a leitura de
      nebulosa, e vive no respiro entre blocos, nunca sob corpo de texto. */
+  /* Os raios são percentuais da largura e da ALTURA da caixa, não da metade
+     dela. Com raio vertical 100% o gradiente só chegava a transparente a uma
+     altura inteira do centro, mas a caixa termina na metade disso: a faixa era
+     cortada em plena luz e desenhava duas linhas retas atravessando a página.
+     Medido na captura, o salto era de +44 em 8px. Com 50% o raio vertical passa
+     a valer a meia-altura, e a rampa (transparente em 72%) termina bem dentro
+     da caixa. A altura da faixa compensa a perda de alcance. */
   .seam-glow {
     background: radial-gradient(
-      ellipse 60% 100% at 50% 50% in oklab,
+      ellipse 60% 50% at 50% 50% in oklab,
       color-mix(in oklab, var(--color-nebula) 32%, transparent) 0%,
       color-mix(in oklab, var(--color-primary) 14%, transparent) 42%,
       transparent 72%
@@ -169,10 +176,16 @@
     background-size: 64px 64px;
   }
 
-  /* Máscara radial para o grid não bater nas bordas com aresta dura. */
+  /* Máscara radial para o grid não bater nas bordas com aresta dura.
+     O raio vertical precisa ser menor ou igual à distância do centro até a
+     borda mais próxima, senão a máscara é cortada antes de chegar a
+     transparente e produz exatamente a aresta que ela deveria evitar. Com o
+     centro a 40% da altura, a borda de cima está a 40% — logo, raio vertical
+     40%. Antes eram 60%, e no topo do hero a máscara ainda estava a ~45% de
+     opacidade quando a caixa acabava. Mesma conta de `.seam-glow`. */
   .mask-fade {
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 40% at 50% 40%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 70% 40% at 50% 40%, #000 30%, transparent 100%);
   }
 
   /* Trecho de destaque dos títulos.
@@ -234,6 +247,29 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes star-pulse {
+  from {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Deriva das nebulosas. Só translate e scale, que a GPU compõe sem repintar.
+   Um `filter` ou `blur` animado aqui custaria uma repintura por frame numa
+   camada do tamanho da tela. */
+@keyframes nebula-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, -2%, 0) scale(1.12);
   }
 }
 
@@ -308,6 +344,32 @@
       animation-timeline: view();
       animation-range: cover 0% cover 100%;
     }
+  }
+
+  /* Constelação de diagnóstico (/vibe-to-scale).
+     Cada célula entra ao cruzar a viewport, e o nó ao lado do número pisca em
+     laço com período próprio. O período vem do componente, para as doze
+     estrelas nunca caírem em sincronia — em sincronia lê como LED de aparelho,
+     não como céu. */
+  @supports (animation-timeline: view()) {
+    .constellation-cell {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+
+  .star-pulse {
+    animation-name: star-pulse;
+    animation-timing-function: var(--ease-in-out-soft);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+
+  /* Deriva lenta das nebulosas. Amplitude pequena de propósito: o fundo precisa
+     dar sensação de profundidade sem que se perceba movimento ao ler. */
+  .nebula-drift {
+    animation: nebula-drift 38s var(--ease-in-out-soft) infinite alternate;
   }
 
   /* Barras de telemetria. Cada uma recebe duração e atraso próprios no

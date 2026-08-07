@@ -80,7 +80,8 @@ O rate limit usa o **binding nativo do Workers**, configurado só no
 ## Estrutura
 
 ```
-app/                 rotas (App Router), sitemap, robots, icon, api/contato
+app/                 rotas (App Router), sitemap, robots, llms.txt,
+                     opengraph-image, icon, api/contato
 components/ui/       primitivos (Button, Section, CommandPalette)
 components/motion/   Reveal, TextReveal
 components/sections/ header, footer, hero, manifesto, two-paths, cta, form
@@ -88,7 +89,8 @@ components/architecture/  SystemTopology, OperationalStatus, CapabilityGrid,
                           ArchitectureTransformation, ArchitectureFlow,
                           ProjectReveal
 content/insights/    artigos em MDX + registry.ts
-lib/                 site.ts (marca), content.ts (copy), insights.ts, schema
+lib/                 site.ts (marca), content.ts (copy), insights.ts,
+                     structured-data.ts (JSON-LD), contact-schema.ts (zod)
 styles/globals.css   tokens semânticos do design system
 ```
 
@@ -111,9 +113,11 @@ assíncrono que avalia biblioteca de cliente no passo de SSR e quebra o prerende
 ## Decisões que valem conhecer
 
 - **CSP sem nonce.** Nonce muda a cada requisição e obriga renderização dinâmica
-  em todas as páginas. O site é estático e não carrega script de terceiro, então
-  a política usa `'self' 'unsafe-inline'` para script. Ao adicionar analytics ou
-  chat, declarar a origem em `next.config.ts` e reavaliar.
+  em todas as páginas. O site é estático de propósito, então a política usa
+  `'self' 'unsafe-inline'` para script. As origens de terceiro são declaradas
+  explicitamente em `next.config.ts`: hoje, o beacon da Cloudflare e o GA4. Ao
+  adicionar outra (chat, tag manager), declarar lá e reavaliar a troca por nonce
+  nas rotas afetadas.
 - **Headers no `next.config.ts`, não em middleware.** O adapter da Cloudflare não
   executa middleware em runtime Node, e a política é estática de qualquer forma.
 - **`staticAssetsIncrementalCache`.** Serve o HTML pré-renderizado a partir dos
@@ -130,6 +134,58 @@ tempo de preenchimento, rate limit por IP (3 mensagens por minuto, via binding
 nativo do Workers) e envio via Resend. Honeypot e tempo respondem `200` sem enviar nada, de propósito:
 avisar o robô de que foi detectado só ajuda quem está automatizando.
 
+## SEO e descoberta
+
+Quatro camadas, e vale saber para que serve cada uma.
+
+**Metadados e canonical.** Toda rota declara `title`, `description` e
+`alternates.canonical`. O canonical existe mesmo sem parâmetro de query porque
+campanhas colam `?utm_source=` em tudo, e sem ele cada variante vira uma URL
+concorrente da própria página.
+
+**Dados estruturados.** `lib/structured-data.ts` monta um `@graph` único por
+página. A organização e o site são declarados uma vez no `layout.tsx`, com
+`@id` estável, e as páginas apenas os referenciam — declarar a organização
+inteira em cada rota faria o Google entender várias entidades diferentes.
+
+Não há `FAQPage`. Marcação de FAQ exige perguntas e respostas visíveis na
+página, e o site não tem essa seção; marcar sem o conteúdo correspondente é
+violação de política e rende ação manual. Se uma seção de perguntas frequentes
+for escrita, a marcação passa a caber.
+
+**`llms.txt`.** Índice do site em Markdown para assistentes de IA
+(llmstxt.org). É gerado das mesmas constantes que alimentam as páginas: escrito
+à mão, descreveria o site de quando foi escrito e ninguém lembraria de
+atualizá-lo ao publicar um artigo.
+
+**`robots.txt`.** Separa crawler de buscador, crawler de treino de modelo e
+crawler de resposta. Os três estão liberados hoje, e a escolha é deliberada:
+ser citado por um assistente quando alguém pergunta sobre arquitetura ou custo
+de nuvem vale mais que proteger um texto que já é público. Para reverter, trocar
+`allow` por `disallow` na lista `TREINO` em `app/robots.ts`.
+
+A imagem de compartilhamento é gerada por `ImageResponse` em
+`app/opengraph-image.tsx`, a partir das constantes de marca. A rota não tem
+parâmetro dinâmico, então o Next a pré-renderiza no `next build` e publica um
+PNG estático — nada disso executa no Worker.
+
+### Variáveis de build
+
+`NEXT_PUBLIC_*` é substituída pelo valor literal durante o build. **Não podem
+ser secret do Worker**: secret é lido em runtime, e nesse momento o bundle já
+foi gerado com string vazia. No Workers Builds, defina-as como variável de
+ambiente da *build*. Não há perda de sigilo: as três aparecem no HTML por
+natureza.
+
+| Variável                               | Para que serve                                  |
+| -------------------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_CF_BEACON_TOKEN`          | Cloudflare Web Analytics                        |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`        | GA4 (`G-...`)                                   |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Meta tag do Search Console (opcional, se por DNS) |
+
+Sem qualquer uma delas, a funcionalidade correspondente simplesmente não carrega
+e o site funciona igual.
+
 ## Consentimento e medição
 
 Mesma abordagem do `lupewedding-site`: escolha por finalidade guardada com a
@@ -143,8 +199,11 @@ nem anúncios:
 - existe **uma finalidade só**, medição, porque é a única coisa que há para
   consentir. Expor uma chave de publicidade que não controlaria nada seria um
   banner que finge escolha, o que é pior que banner nenhum;
-- essa finalidade **controla de fato** o carregamento do Cloudflare Web
-  Analytics, que só entra na página depois do aceite.
+- essa finalidade **controla de fato** o carregamento das duas tags de medição,
+  que só entram na página depois do aceite: o Cloudflare Web Analytics
+  (cookieless, não identifica ninguém) e o GA4 (usa cookie e identifica entre
+  sessões — por isso o script sequer é baixado antes do aceite, e não basta o
+  Consent Mode negar o armazenamento).
 
 Para o controle valer em produção:
 
@@ -163,7 +222,10 @@ vez de herdar em silêncio um consentimento dado sobre outro texto.
 - [ ] Confirmar `contato@menendes.com.br` como caixa de destino e remetente
       (`SITE.contact.email` em `lib/site.ts` e os secrets).
 - [ ] Confirmar as URLs de LinkedIn e GitHub em `SITE.social` (hoje marcadores).
-- [ ] Criar a imagem Open Graph em `public/og.png` (1200x630) e referenciá-la em
-      `app/layout.tsx`.
+- [x] Imagem Open Graph: gerada em `app/opengraph-image.tsx`, não é mais um PNG
+      a versionar.
 - [ ] Definir os secrets do Resend no Worker (ver acima).
-- [ ] Desligar o Automatic Setup do Web Analytics e definir `NEXT_PUBLIC_CF_BEACON_TOKEN`.
+- [x] Web Analytics criado para `menendes.com.br` com `auto_install: false`.
+      Falta definir `NEXT_PUBLIC_CF_BEACON_TOKEN` como variável de build.
+- [ ] Criar a propriedade GA4 e definir `NEXT_PUBLIC_GA_MEASUREMENT_ID`.
+- [ ] Verificar o domínio no Search Console e enviar o sitemap.

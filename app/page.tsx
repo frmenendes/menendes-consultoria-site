@@ -29,10 +29,10 @@ export default function HomePage() {
 
       <SeamGlow intensity={0.75} />
 
-      <Section id="expertise">
+      <Section id="solucoes">
         <div className="shell">
           <SectionHeading
-            label="Expertise"
+            label="Soluções"
             title="Seis frentes que sustentam"
             accent="uma operação inteira."
             body="Elas quase nunca chegam sozinhas. Um problema de custo costuma ser um problema de arquitetura, e uma falha recorrente costuma ser um problema de observabilidade."
@@ -119,7 +119,7 @@ export default function HomePage() {
               href="/servicos"
               className="group inline-flex items-center gap-2 text-sm font-medium text-primary-soft hover:text-primary"
             >
-              Ver a expertise completa
+              Ver todas as soluções
               <ArrowRight />
             </Link>
           </Reveal>

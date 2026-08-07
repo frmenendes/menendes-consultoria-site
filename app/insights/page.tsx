@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CallToAction } from "@/components/sections/cta";
 import { PageHero } from "@/components/sections/page-hero";
+import { StructuredData } from "@/components/ui/structured-data";
+import { breadcrumbSchema } from "@/lib/structured-data";
 import { Reveal } from "@/components/motion/reveal";
 import { Section } from "@/components/ui/section";
 import { ArrowRight } from "@/components/ui/button";
@@ -17,6 +19,9 @@ export const metadata: Metadata = {
 export default function InsightsPage() {
   return (
     <>
+      <StructuredData
+        graph={[breadcrumbSchema([{ name: "Menendes Lab", path: "/insights" }])]}
+      />
       <PageHero
         label="Menendes Lab"
         title="Notas sobre o que"

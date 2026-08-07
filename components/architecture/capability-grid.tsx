@@ -2,7 +2,7 @@ import { CAPABILITIES, type Capability } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 /**
- * Bento grid dos pilares de expertise.
+ * Bento grid dos pilares de solução.
  *
  * Sobre a ausência de revelação por hover:
  *

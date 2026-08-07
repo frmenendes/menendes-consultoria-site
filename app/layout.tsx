@@ -4,6 +4,9 @@ import { SiteHeader } from "@/components/sections/site-header";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { ConsentBanner } from "@/components/ui/consent-banner";
 import { WebAnalytics } from "@/components/ui/web-analytics";
+import { GoogleAnalytics } from "@/components/ui/google-analytics";
+import { StructuredData } from "@/components/ui/structured-data";
+import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import { SITE } from "@/lib/site";
 import "@/styles/globals.css";
 
@@ -58,38 +61,33 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
     "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
   },
+  category: "technology",
+  keywords: [
+    "consultoria de arquitetura de software",
+    "consultoria cloud",
+    "SRE",
+    "DevSecOps",
+    "FinOps",
+    "observabilidade",
+    "Kubernetes",
+    "modernização de sistemas",
+    "vibe coding",
+    "São Paulo",
+  ],
+  // A verificação do Search Console pode ser feita por DNS ou por meta tag. A
+  // meta tag fica aqui para o caso de o domínio ser movido de conta: o registro
+  // TXT some junto, a tag não.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export const viewport: Viewport = {
   themeColor: "#0a0c10",
   colorScheme: "dark",
-};
-
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: SITE.name,
-  legalName: SITE.legalName,
-  url: SITE.url,
-  description: SITE.description,
-  areaServed: "BR",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "São Paulo",
-    addressRegion: "SP",
-    addressCountry: "BR",
-  },
-  founder: { "@type": "Person", name: "Felipe Menendes" },
-  knowsAbout: [
-    "Arquitetura de software",
-    "Cloud computing",
-    "Site Reliability Engineering",
-    "DevSecOps",
-    "FinOps",
-    "Observabilidade",
-    "Kubernetes",
-  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -123,11 +121,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <ConsentBanner />
         <WebAnalytics />
-        <script
-          type="application/ld+json"
-          // JSON-LD é dado estático definido acima, não entrada de usuário.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-        />
+        <GoogleAnalytics />
+        {/* A organização e o site são declarados uma vez, aqui. As páginas
+            acrescentam os nós próprios (Service, TechArticle, Breadcrumb) e
+            apenas referenciam estes por @id. */}
+        <StructuredData graph={[organizationSchema, websiteSchema]} />
       </body>
     </html>
   );

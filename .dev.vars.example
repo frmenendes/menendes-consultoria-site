@@ -5,6 +5,24 @@ RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_FROM=Site MENENDES <contato@mail.menendes.com.br>
 CONTACT_TO=destinatario@exemplo.com
 
+# ---------------------------------------------------------------------------
+# Medição.
+#
+# ATENÇÃO: as três variáveis abaixo são NEXT_PUBLIC_, e o Next as substitui pelo
+# valor literal durante o build. Elas NÃO podem ser secret do Worker: secret é
+# lido em runtime, e nesse momento o bundle já foi gerado com a string vazia.
+# No Workers Builds, defina-as como variável de ambiente da BUILD.
+# Não há perda de sigilo nisso: as três aparecem no HTML por natureza.
+# ---------------------------------------------------------------------------
+
 # Token do Cloudflare Web Analytics. Sem ele, nenhum beacon é carregado.
 # Exige desligar o Automatic Setup no painel, senão a borda injeta antes do consentimento.
 NEXT_PUBLIC_CF_BEACON_TOKEN=
+
+# ID de métrica do GA4 (formato G-XXXXXXXXXX). Sem ele, o GA4 não é carregado.
+# Só entra na página depois do consentimento de medição.
+NEXT_PUBLIC_GA_MEASUREMENT_ID=
+
+# Verificação do Google Search Console por meta tag. Só o valor do `content`,
+# não a tag inteira. Opcional: a verificação por DNS dispensa isto.
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=

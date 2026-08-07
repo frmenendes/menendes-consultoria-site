@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/sections/contact-form";
 import { PageHero } from "@/components/sections/page-hero";
+import { StructuredData } from "@/components/ui/structured-data";
+import { breadcrumbSchema } from "@/lib/structured-data";
 import { Reveal } from "@/components/motion/reveal";
 import { Section } from "@/components/ui/section";
 import { SITE, whatsappUrl } from "@/lib/site";
@@ -15,6 +17,9 @@ export const metadata: Metadata = {
 export default function ContatoPage() {
   return (
     <>
+      <StructuredData
+        graph={[breadcrumbSchema([{ name: "Contato", path: "/contato" }])]}
+      />
       <PageHero
         label="Contato"
         title="Seu próximo problema complexo"

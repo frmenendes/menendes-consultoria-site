@@ -1,19 +1,35 @@
 import { Reveal } from "@/components/motion/reveal";
 import { MonoLabel } from "@/components/ui/section";
+import { cn } from "@/lib/utils";
 
+/**
+ * `flush` remove a borda inferior.
+ *
+ * Existe para as páginas que continuam num fundo cósmico: ali a régua de 1px
+ * cruzando a tela briga com um fundo que tem profundidade, e a separação passa
+ * a ser feita pela costura luminosa. Nas demais páginas a borda continua sendo
+ * a divisa certa, porque abaixo dela há superfície chapada.
+ */
 export function PageHero({
   label,
   title,
   accent,
   body,
+  flush = false,
 }: {
   label: string;
   title: string;
   accent?: string;
   body?: string;
+  flush?: boolean;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-border pt-[calc(var(--nav-h)+5rem)] pb-20">
+    <section
+      className={cn(
+        "relative overflow-hidden pt-[calc(var(--nav-h)+5rem)] pb-20",
+        !flush && "border-b border-border",
+      )}
+    >
       <div className="blueprint mask-fade absolute inset-0 opacity-40" aria-hidden="true" />
       <div
         aria-hidden="true"

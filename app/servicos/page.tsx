@@ -3,11 +3,13 @@ import { CapabilityGrid } from "@/components/architecture/capability-grid";
 import { CallToAction } from "@/components/sections/cta";
 import { Reveal } from "@/components/motion/reveal";
 import { PageHero } from "@/components/sections/page-hero";
+import { StructuredData } from "@/components/ui/structured-data";
+import { breadcrumbSchema } from "@/lib/structured-data";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { OFFERINGS } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Expertise",
+  title: "Soluções em arquitetura, cloud e SRE",
   description:
     "Arquitetura de software, cloud, SRE, segurança, FinOps e sistemas inteligentes. Quatro formas de começar, do diagnóstico ao acompanhamento contínuo.",
   alternates: { canonical: "/servicos" },
@@ -16,8 +18,11 @@ export const metadata: Metadata = {
 export default function ServicosPage() {
   return (
     <>
+      <StructuredData
+        graph={[breadcrumbSchema([{ name: "Soluções", path: "/servicos" }])]}
+      />
       <PageHero
-        label="Expertise"
+        label="Soluções"
         title="Arquitetura, operação"
         accent="e consequência financeira."
         body="As seis frentes abaixo raramente aparecem isoladas. Custo alto costuma ser sintoma de arquitetura, e indisponibilidade recorrente costuma ser sintoma de falta de observabilidade."
