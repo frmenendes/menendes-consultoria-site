@@ -34,7 +34,7 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 h-[--nav-h] border-b backdrop-blur-md",
+        "fixed inset-x-0 top-0 z-50 h-(--nav-h) border-b backdrop-blur-md",
         "transition-colors duration-300",
         scrolled ? "border-border bg-bg/95" : "border-border-soft bg-bg/70",
       )}
@@ -125,7 +125,7 @@ export function SiteHeader() {
       {menuOpen ? (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 bottom-0 top-[--nav-h] z-40 overflow-y-auto border-t border-border bg-bg px-5 py-8 lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-(--nav-h) z-40 overflow-y-auto border-t border-border bg-bg px-5 py-8 lg:hidden"
         >
           <nav className="flex flex-col" aria-label="Principal, versão compacta">
             {NAV.map((item) => (

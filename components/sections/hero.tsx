@@ -15,7 +15,7 @@ import { SITE } from "@/lib/site";
  */
 export function Hero() {
   return (
-    <section className="relative flex min-h-[92svh] items-center overflow-hidden pt-[--nav-h]">
+    <section className="relative flex min-h-[92svh] items-center overflow-hidden pt-(--nav-h)">
       <div className="blueprint mask-fade absolute inset-0 opacity-40" aria-hidden="true" />
 
       <div className="shell relative w-full py-16">

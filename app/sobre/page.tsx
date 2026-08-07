@@ -99,7 +99,7 @@ export default function SobrePage() {
               <li key={item.title}>
                 <Reveal
                   delay={index * 0.06}
-                  className="edge h-full rounded-[--radius-card] border border-border bg-surface/60 p-7"
+                  className="edge h-full rounded-card border border-border bg-surface/60 p-7"
                 >
                   <h3 className="text-lg">{item.title}</h3>
                   <p className="mt-3 text-sm text-fg-soft">{item.body}</p>
@@ -122,7 +122,7 @@ export default function SobrePage() {
               <li key={item.title}>
                 <Reveal
                   delay={index * 0.06}
-                  className="edge h-full rounded-[--radius-card] border border-border bg-surface/60 p-7"
+                  className="edge h-full rounded-card border border-border bg-surface/60 p-7"
                 >
                   <h3 className="text-lg">{item.title}</h3>
                   <p className="mt-3 text-sm text-fg-soft">{item.body}</p>

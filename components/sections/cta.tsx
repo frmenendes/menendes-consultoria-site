@@ -13,7 +13,7 @@ export function CallToAction({
   return (
     <Section>
       <div className="shell">
-        <Reveal className="edge relative overflow-hidden rounded-[--radius-panel] border border-border bg-surface/50 px-8 py-16 md:px-14 md:py-20">
+        <Reveal className="edge relative overflow-hidden rounded-panel border border-border bg-surface/50 px-8 py-16 md:px-14 md:py-20">
           <div
             aria-hidden="true"
             className="absolute inset-0 opacity-60"

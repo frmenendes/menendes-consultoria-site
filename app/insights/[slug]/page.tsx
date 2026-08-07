@@ -90,7 +90,7 @@ export default async function InsightPage({ params }: { params: Promise<Params> 
             [&_a]:text-primary-soft [&_a]:underline [&_a]:underline-offset-2
             [&_code]:rounded [&_code]:bg-surface-2 [&_code]:px-1.5 [&_code]:py-0.5
             [&_code]:font-mono [&_code]:text-[0.875em] [&_code]:text-fg
-            [&_pre]:mt-6 [&_pre]:overflow-x-auto [&_pre]:rounded-[--radius-card]
+            [&_pre]:mt-6 [&_pre]:overflow-x-auto [&_pre]:rounded-card
             [&_pre]:border [&_pre]:border-border [&_pre]:bg-surface [&_pre]:p-5"
         >
           <Body />

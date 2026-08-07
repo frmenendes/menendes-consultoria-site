@@ -60,7 +60,7 @@ export function TwoPaths() {
               onFocus={() => setActive(path.id)}
               onBlur={() => setActive(null)}
               className={cn(
-                "edge group relative flex min-h-[26rem] flex-col justify-end overflow-hidden rounded-[--radius-panel]",
+                "edge group relative flex min-h-[26rem] flex-col justify-end overflow-hidden rounded-panel",
                 "border border-border bg-surface/50 p-8 transition-colors duration-500 md:p-10",
                 isActive && "border-border-strong",
               )}

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 type Status = "idle" | "sending" | "sent" | "error";
 
 const FIELD =
-  "w-full rounded-[--radius-card] border border-border bg-surface/60 px-4 py-3 text-sm text-fg " +
+  "w-full rounded-card border border-border bg-surface/60 px-4 py-3 text-sm text-fg " +
   "outline-none transition-colors placeholder:text-faint focus:border-primary";
 
 export function ContactForm() {
@@ -83,7 +83,7 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="edge rounded-[--radius-panel] border border-border bg-surface/60 p-10 text-center"
+        className="edge rounded-panel border border-border bg-surface/60 p-10 text-center"
       >
         <p className="mono-label text-signal">MENSAGEM ENVIADA</p>
         <h3 className="mt-4 text-2xl">Recebido. Retornamos em breve.</h3>

@@ -43,7 +43,7 @@ export function ArchitectureFlow() {
         <li key={layer.name}>
           <Reveal
             delay={index * 0.06}
-            className="edge relative rounded-[--radius-card] border border-border bg-surface/60 px-6 py-5"
+            className="edge relative rounded-card border border-border bg-surface/60 px-6 py-5"
           >
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <h3 className="text-base text-fg">{layer.name}</h3>

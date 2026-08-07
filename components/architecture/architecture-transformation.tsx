@@ -100,7 +100,7 @@ export function ArchitectureTransformation() {
       <div className="grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-start">
         {/* Diagrama */}
         <div
-          className="edge relative aspect-[4/3] w-full overflow-hidden rounded-[--radius-panel] border border-border bg-surface/40 md:aspect-[16/10]"
+          className="edge relative aspect-[4/3] w-full overflow-hidden rounded-panel border border-border bg-surface/40 md:aspect-[16/10]"
           aria-hidden="true"
         >
           <div className="blueprint mask-fade absolute inset-0 opacity-40" />

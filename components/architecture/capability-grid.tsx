@@ -49,7 +49,7 @@ function CapabilityCard({
   return (
     <article
       className={cn(
-        "edge group relative flex h-full flex-col overflow-hidden rounded-[--radius-card]",
+        "edge group relative flex h-full flex-col overflow-hidden rounded-card",
         "border border-border bg-surface/60 p-6 md:p-7",
         "transition-[border-color,transform] duration-300",
         "hover:-translate-y-0.5 hover:border-border-strong",

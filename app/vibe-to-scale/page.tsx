@@ -32,7 +32,7 @@ export default function VibeToScalePage() {
             body="Nenhum destes itens é falha de quem construiu. São consequências previsíveis de otimizar para velocidade de validação, que é exatamente o que a primeira versão precisava fazer."
           />
 
-          <ul className="mt-12 grid gap-px overflow-hidden rounded-[--radius-card] border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-12 grid gap-px overflow-hidden rounded-card border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {VIBE_PROBLEMS.map((problem, index) => (
               <li key={problem} className="bg-surface/70 p-5">
                 <span className="font-mono text-[0.625rem] text-warning">
@@ -81,7 +81,7 @@ export default function VibeToScalePage() {
             ))}
           </ol>
 
-          <Reveal className="mt-12 rounded-[--radius-card] border border-border bg-surface/60 p-7">
+          <Reveal className="mt-12 rounded-card border border-border bg-surface/60 p-7">
             <h3 className="mono-label text-primary-soft">Sobre o escopo</h3>
             <p className="mt-4 max-w-3xl text-fg-soft">
               Preparar a arquitetura para mobile e para uso B2B não significa incluir o

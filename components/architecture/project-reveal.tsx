@@ -181,7 +181,7 @@ function CasePanel({ project, onClose }: { project: Project; onClose: () => void
           </Block>
 
           {project.note ? (
-            <p className="mt-10 rounded-[--radius-card] border border-border bg-surface/60 p-5 text-sm text-muted">
+            <p className="mt-10 rounded-card border border-border bg-surface/60 p-5 text-sm text-muted">
               {project.note}
             </p>
           ) : null}

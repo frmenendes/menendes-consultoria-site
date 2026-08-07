@@ -102,7 +102,7 @@ export default function LupeWeddingPage() {
               <li key={view.title}>
                 <Reveal
                   delay={index * 0.07}
-                  className="edge h-full rounded-[--radius-card] border border-border bg-surface/60 p-7"
+                  className="edge h-full rounded-card border border-border bg-surface/60 p-7"
                 >
                   <h3 className="text-lg">{view.title}</h3>
                   <p className="mt-3 text-sm text-fg-soft">{view.body}</p>
@@ -134,7 +134,7 @@ export default function LupeWeddingPage() {
             title="O que sustenta"
             accent="o produto por baixo."
           />
-          <ul className="mt-12 grid gap-px overflow-hidden rounded-[--radius-card] border border-border bg-border md:grid-cols-2">
+          <ul className="mt-12 grid gap-px overflow-hidden rounded-card border border-border bg-border md:grid-cols-2">
             {ENGINEERING.map((item) => (
               <li key={item.title} className="bg-surface/70 p-7">
                 <h3 className="text-base text-fg">{item.title}</h3>
@@ -147,7 +147,7 @@ export default function LupeWeddingPage() {
 
       <Section className="border-t border-border">
         <div className="shell-narrow">
-          <Reveal className="edge rounded-[--radius-panel] border border-border bg-surface/60 p-8 md:p-10">
+          <Reveal className="edge rounded-panel border border-border bg-surface/60 p-8 md:p-10">
             <h2 className="mono-label text-primary-soft">Uso de inteligência artificial</h2>
             <p className="mt-5 text-xl leading-snug text-fg md:text-2xl">
               A inteligência artificial acelerou partes da construção. Engenharia de

@@ -2,7 +2,7 @@ import { ArrowRight, ButtonLink } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <section className="relative flex min-h-[70svh] items-center overflow-hidden pt-[--nav-h]">
+    <section className="relative flex min-h-[70svh] items-center overflow-hidden pt-(--nav-h)">
       <div className="blueprint mask-fade absolute inset-0 opacity-40" aria-hidden="true" />
       <div className="shell relative py-20">
         <p className="mono-label text-primary-soft">Erro 404</p>

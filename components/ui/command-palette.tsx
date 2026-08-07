@@ -153,7 +153,7 @@ export function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label="Busca por comandos"
-            className="edge w-full max-w-lg overflow-hidden rounded-[--radius-panel] border border-border bg-surface"
+            className="edge w-full max-w-lg overflow-hidden rounded-panel border border-border bg-surface"
             onClick={(event) => event.stopPropagation()}
             onKeyDown={onListKeyDown}
           >

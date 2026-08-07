@@ -99,7 +99,7 @@ export default function HomePage() {
               <li key={offering.slug}>
                 <Reveal
                   delay={index * 0.06}
-                  className="edge h-full rounded-[--radius-card] border border-border bg-surface/50 p-7"
+                  className="edge h-full rounded-card border border-border bg-surface/50 p-7"
                 >
                   <span className="font-mono text-xs text-primary-soft">{offering.index}</span>
                   <h3 className="mt-4 text-xl">{offering.title}</h3>

@@ -36,7 +36,7 @@ export function OperationalStatus() {
     <>
       {/* Estado expandido, dentro do fluxo da hero. */}
       <dl
-        className="edge grid w-full max-w-sm gap-px overflow-hidden rounded-[--radius-card] border border-border bg-surface/70"
+        className="edge grid w-full max-w-sm gap-px overflow-hidden rounded-card border border-border bg-surface/70"
         aria-label="Postura operacional"
       >
         {OPERATIONAL_STATUS.map((item) => (
