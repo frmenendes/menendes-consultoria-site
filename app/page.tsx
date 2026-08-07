@@ -7,6 +7,7 @@ import { CapabilityGrid } from "@/components/architecture/capability-grid";
 import { ArchitectureTransformation } from "@/components/architecture/architecture-transformation";
 import { ProjectReveal } from "@/components/architecture/project-reveal";
 import { TraceRail } from "@/components/architecture/trace-rail";
+import { CosmicBackdrop, SeamGlow } from "@/components/architecture/cosmic-backdrop";
 import { Reveal } from "@/components/motion/reveal";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { ArrowRight, ButtonLink } from "@/components/ui/button";
@@ -15,16 +16,18 @@ import { OFFERINGS } from "@/lib/content";
 export default function HomePage() {
   return (
     <div className="relative">
+      <CosmicBackdrop />
       <TraceRail />
 
       <Hero />
 
-
       <Manifesto />
 
+      <SeamGlow />
 
       <TwoPaths />
 
+      <SeamGlow intensity={0.75} />
 
       <Section id="expertise">
         <div className="shell">
@@ -39,7 +42,6 @@ export default function HomePage() {
           </div>
         </div>
       </Section>
-
 
       <Section>
         <div className="shell">
@@ -67,6 +69,7 @@ export default function HomePage() {
         </div>
       </Section>
 
+      <SeamGlow />
 
       <Section id="projetos">
         <div className="shell">
@@ -81,7 +84,6 @@ export default function HomePage() {
           </div>
         </div>
       </Section>
-
 
       <Section>
         <div className="shell">
@@ -124,6 +126,7 @@ export default function HomePage() {
         </div>
       </Section>
 
+      <SeamGlow intensity={0.85} />
 
       <CallToAction />
     </div>
