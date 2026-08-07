@@ -100,6 +100,8 @@ export function SystemTopology() {
   const reduced = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<SVGGElement>(null);
+  /** Um <g> externo por nó, usado só pelo parallax. */
+  const nodeRefs = useRef(new Map<string, SVGGElement>());
   const [built, setBuilt] = useState(-1);
   const [active, setActive] = useState(false);
 
@@ -136,11 +138,19 @@ export function SystemTopology() {
   useEffect(() => {
     if (reduced || !active) return;
     const element = rootRef.current;
-    const layer = layerRef.current;
-    if (!element || !layer) return;
+    if (!element) return;
 
     // Ponteiro grosseiro (toque) não tem hover: não vale o custo do listener.
     if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    // Fator de profundidade por nó, espalhado pela razão áurea para os nós não
+    // derivarem em uníssono. Entre 0.03 e 0.13, o que dá de 0,3 a 1,3 unidade
+    // de deslocamento no pico.
+    const nodeLayers: [SVGGElement, number][] = [];
+    nodeRefs.current.forEach((nó, id) => {
+      const i = NODES.findIndex((n) => n.id === id);
+      nodeLayers.push([nó, 0.03 + (((i < 0 ? 0 : i) * 0.618) % 1) * 0.1]);
+    });
 
     let targetX = 0;
     let targetY = 0;
@@ -150,7 +160,9 @@ export function SystemTopology() {
 
     const onMove = (event: PointerEvent) => {
       const rect = element.getBoundingClientRect();
-      // Deslocamento de no máximo 10px: sugere reação sem atrapalhar a leitura.
+      // A unidade aqui é a do viewBox, não pixel: `transform` em SVG opera no
+      // espaço do usuário. Numa largura de 200, o valor antigo (20) deslocava
+      // 5% do desenho inteiro — daí a sensação de o grafo escorregar em bloco.
       targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 20;
       targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 14;
     };
@@ -163,7 +175,17 @@ export function SystemTopology() {
     const tick = () => {
       currentX += (targetX - currentX) * 0.06;
       currentY += (targetY - currentY) * 0.06;
-      layer.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
+
+      // Cada nó recebe o próprio deslocamento, e não o grafo inteiro. O fator
+      // é pequeno e varia por nó: eles derivam em profundidades diferentes,
+      // como pontos a distâncias distintas, em vez de escorregarem juntos.
+      // As arestas ficam paradas — com amplitude abaixo de 1,3 unidade num
+      // viewBox de 200 a desconexão é imperceptível, e é o que preserva a
+      // leitura de grafo.
+      for (const [nó, fator] of nodeLayers) {
+        nó.style.transform = `translate3d(${(currentX * fator).toFixed(3)}px, ${(currentY * fator).toFixed(3)}px, 0)`;
+      }
+
       frame = requestAnimationFrame(tick);
     };
 
@@ -175,7 +197,7 @@ export function SystemTopology() {
       element.removeEventListener("pointermove", onMove);
       element.removeEventListener("pointerleave", onLeave);
       cancelAnimationFrame(frame);
-      layer.style.transform = "";
+      for (const [nó] of nodeLayers) nó.style.transform = "";
     };
   }, [active, reduced]);
 
@@ -199,7 +221,7 @@ export function SystemTopology() {
 
         <ellipse cx={sx(50)} cy="50" rx={sx(48)} ry="46" fill="url(#topology-glow)" />
 
-        <g ref={layerRef} style={{ willChange: "transform" }}>
+        <g ref={layerRef}>
           {EDGES.map(([fromId, toId, hot]) => {
             const from = byId.get(fromId);
             const to = byId.get(toId);
@@ -252,8 +274,19 @@ export function SystemTopology() {
             const color = ROLE_COLOR[node.role];
             const cx = sx(node.x);
             return (
+              // Duas camadas de propósito: a de fora é do parallax, a de dentro
+              // é da entrada em escala. Num elemento só, o rAF do parallax
+              // sobrescreveria o `transform` da animação de entrada a cada
+              // frame e o nó nunca terminaria de aparecer.
               <g
                 key={node.id}
+                ref={(el) => {
+                  if (el) nodeRefs.current.set(node.id, el);
+                  else nodeRefs.current.delete(node.id);
+                }}
+                style={{ willChange: "transform" }}
+              >
+              <g
                 style={{
                   opacity: visible ? 1 : 0,
                   transform: visible ? "scale(1)" : "scale(0.4)",
@@ -284,6 +317,7 @@ export function SystemTopology() {
                 >
                   {node.label}
                 </text>
+              </g>
               </g>
             );
           })}

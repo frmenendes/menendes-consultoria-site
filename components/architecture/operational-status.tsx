@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { HudFrame } from "@/components/architecture/hud-frame";
 import { OPERATIONAL_STATUS } from "@/lib/content";
 import { useIsClient } from "@/hooks/use-consent";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -54,32 +55,58 @@ export function OperationalStatus() {
   return (
     <>
       {/*
-        Estado expandido: faixa horizontal na largura da hero, não uma caixa.
+        Estado expandido: faixa de módulos HUD na largura da hero.
 
-        Era uma lista vertical estreita (`max-w-sm`) encostada no canto inferior
-        esquerdo, e tinha dois problemas somados. Os valores ficavam alinhados à
-        direita, e como "READY", "ENFORCED" e "RUNNING" têm larguras diferentes,
-        os cinco pontos caíam em cinco colunas distintas — desalinhamento
-        visível numa lista cujo assunto é justamente rigor. E a caixa sobrava
-        órfã: um bloco estreito com um vão enorme à direita, muito abaixo de
-        onde a topologia termina, sem se conectar a nada.
+        Duas correções de composição vieram antes desta camada, e elas seguem
+        valendo. Era uma lista vertical estreita encostada no canto inferior
+        esquerdo, com os valores alinhados à direita — e como "READY",
+        "ENFORCED" e "RUNNING" têm larguras diferentes, os cinco pontos caíam em
+        cinco colunas distintas. Em células próprias os pontos alinham por
+        construção, e a faixa distribui a informação em vez de amontoá-la.
 
-        Em faixa, cada estado ganha uma célula própria com rótulo em cima e
-        valor embaixo, então os pontos alinham por construção, e a informação
-        se distribui pela largura em vez de se amontoar num canto. Fecha a hero
-        como régua de instrumento, que é o que ela sempre quis dizer.
+        O tratamento é de instrumento, não de cartão: cada estado vira um módulo
+        com colchetes de canto, índice, e uma barra de telemetria própria. Os
+        colchetes marcam só os cantos em vez de fechar um retângulo — sobre o
+        fundo estelar, quatro linhas contínuas cortam o céu e quatro cantos
+        apenas o pontuam.
+
+        A telemetria é decorativa e diz "isto está sendo medido", sem afirmar
+        número nenhum: os estados são declarações de postura de engenharia, e
+        inventar métrica ao lado deles seria mentir com gráfico.
       */}
       <dl
-        className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-border pt-7 sm:grid-cols-3 lg:grid-cols-5"
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
         aria-label="Postura operacional"
       >
-        {OPERATIONAL_STATUS.map((item) => (
-          <div key={item.key}>
-            <dt className="mono-label">{item.key}</dt>
-            <dd className="mt-2.5 flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-fg">
-              <Dot />
-              {item.value}
-            </dd>
+        {OPERATIONAL_STATUS.map((item, index) => (
+          <div
+            key={item.key}
+            className="group relative bg-surface/30 px-4 py-3.5 transition-colors duration-500 hover:bg-surface/60"
+          >
+            <HudFrame />
+            {/* Realce no cursor: os colchetes acendem, como um módulo que
+                responde ao ser consultado. */}
+            <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <HudFrame tone="active" />
+            </div>
+
+            <div className="relative flex items-baseline justify-between gap-3">
+              <dt className="mono-label">{item.key}</dt>
+              <span
+                aria-hidden="true"
+                className="font-mono text-[0.5625rem] tracking-[0.16em] text-faint"
+              >
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div className="relative mt-3 flex items-end justify-between gap-3">
+              <dd className="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-fg">
+                <Dot />
+                {item.value}
+              </dd>
+              <Telemetria seed={index} />
+            </div>
           </div>
         ))}
       </dl>
@@ -125,6 +152,37 @@ function PilulaColapsada({
       </div>
     ),
     document.body,
+  );
+}
+
+/**
+ * Telemetria compacta do módulo.
+ *
+ * Reaproveita a gramática de `.signal-bar` que já existe no site. Cada barra
+ * recebe altura, duração e atraso próprios, espalhados pela razão áurea a
+ * partir do índice do módulo — assim os cinco conjuntos da faixa nunca caem em
+ * sincronia, que é o que faria a linha inteira pulsar como um LED.
+ */
+function Telemetria({ seed }: { seed: number }) {
+  const fase = (seed * 0.618) % 1;
+
+  return (
+    <div aria-hidden="true" className="flex h-4 items-end gap-[3px]">
+      {[0, 1, 2, 3, 4].map((i) => {
+        const f = (fase + i * 0.27) % 1;
+        return (
+          <span
+            key={i}
+            className="signal-bar w-[2px] rounded-[1px] bg-gradient-to-t from-primary/20 to-primary-soft"
+            style={{
+              height: `${35 + f * 60}%`,
+              animationDuration: `${1.8 + f * 1.6}s`,
+              animationDelay: `-${f * 2.4}s`,
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 

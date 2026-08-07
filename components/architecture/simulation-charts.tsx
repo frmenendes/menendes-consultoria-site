@@ -181,7 +181,7 @@ export function CostChart() {
           strokeWidth={2}
           strokeDasharray="5 4"
           dot={false}
-          activeDot={{ r: 4, strokeWidth: 0 }}
+          activeDot={{ r: 3.5, strokeWidth: 2, stroke: "var(--color-surface)" }}
           animationDuration={1400}
           animationEasing="ease-out"
         />
@@ -192,7 +192,7 @@ export function CostChart() {
           stroke={TINTA.serie}
           strokeWidth={2}
           dot={false}
-          activeDot={{ r: 4, strokeWidth: 0 }}
+          activeDot={{ r: 3.5, strokeWidth: 2, stroke: "var(--color-surface)" }}
           animationDuration={1400}
           animationBegin={200}
           animationEasing="ease-out"
@@ -338,6 +338,7 @@ export function LatencyChart() {
           stroke={TINTA.serie}
           strokeWidth={2}
           fill="url(#grad-latencia)"
+          activeDot={{ r: 3.5, strokeWidth: 2, stroke: "var(--color-surface)" }}
           animationDuration={1300}
           animationEasing="ease-out"
         />
