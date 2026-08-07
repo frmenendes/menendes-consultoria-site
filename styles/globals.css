@@ -56,7 +56,7 @@
   :root {
     color-scheme: dark;
     /* Altura da barra fixa, usada por scroll-margin e paddings de topo. */
-    --nav-h: 72px;
+    --nav-h: 64px;
   }
 
   * {

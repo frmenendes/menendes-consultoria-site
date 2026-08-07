@@ -8,6 +8,25 @@ import { cn } from "@/lib/utils";
 
 type Command = { label: string; hint: string; href: string };
 
+function SearchIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+      className="flex-none"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
 /**
  * Navegação por teclado. É um atalho para quem já conhece o site, nunca a única
  * forma de chegar a algum lugar: tudo aqui também está no menu convencional.
@@ -108,15 +127,21 @@ export function CommandPalette() {
 
   return (
     <>
+      {/* Parece um campo de busca, não um ícone: a pílula anterior era pequena
+          demais para sinalizar o que fazia e ficava espremida ao lado do CTA. */}
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        aria-label="Abrir busca por comandos"
-        className="hidden items-center gap-2 rounded-full border border-border px-3 py-1.5 font-mono text-[0.625rem] tracking-[0.12em] text-muted transition-colors hover:border-border-strong hover:text-fg-soft md:inline-flex"
+        aria-label="Buscar página ou projeto"
+        className="hidden h-9 w-56 items-center gap-2.5 rounded-md border border-border bg-surface/60 px-3 text-sm text-muted transition-colors hover:border-border-strong hover:text-fg-soft md:flex"
       >
-        <span aria-hidden="true">⌘</span>K
+        <SearchIcon />
+        <span className="flex-1 text-left">Buscar</span>
+        <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[0.625rem] text-faint">
+          ⌘K
+        </kbd>
       </button>
 
       {open ? (
@@ -132,17 +157,20 @@ export function CommandPalette() {
             onClick={(event) => event.stopPropagation()}
             onKeyDown={onListKeyDown}
           >
-            <input
-              ref={inputRef}
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setCursor(0);
-              }}
-              placeholder="Buscar página ou projeto"
-              aria-label="Buscar página ou projeto"
-              className="w-full border-b border-border bg-transparent px-5 py-4 text-sm text-fg outline-none placeholder:text-faint"
-            />
+            <div className="flex items-center gap-3 border-b border-border px-5">
+              <SearchIcon />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setCursor(0);
+                }}
+                placeholder="Buscar página ou projeto"
+                aria-label="Buscar página ou projeto"
+                className="w-full bg-transparent py-4 text-sm text-fg outline-none placeholder:text-faint"
+              />
+            </div>
             <ul className="max-h-72 overflow-y-auto p-2">
               {results.length === 0 ? (
                 <li className="px-3 py-6 text-center text-sm text-muted">

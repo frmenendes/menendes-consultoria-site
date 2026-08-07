@@ -9,6 +9,16 @@ import { CommandPalette } from "@/components/ui/command-palette";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
 import { cn } from "@/lib/utils";
 
+/**
+ * Barra fixa.
+ *
+ * Estrutura: marca à esquerda, navegação imediatamente depois dela, e o bloco
+ * de ações empurrado para a direita. Centralizar o menu deixava dois vãos
+ * grandes e fazia a barra parecer vazia em tela wide.
+ *
+ * A barra tem fundo e borda desde o topo, em vez de só ganhar depois do scroll.
+ * Flutuando transparente sobre o grid da hero, ela parecia solta da página.
+ */
 export function SiteHeader() {
   const pathname = usePathname();
   const scrolled = useScrolledPast(8);
@@ -24,25 +34,21 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 h-[--nav-h] transition-colors duration-300",
-        scrolled && "border-b border-border bg-bg/80 backdrop-blur-md",
+        "fixed inset-x-0 top-0 z-50 h-[--nav-h] border-b backdrop-blur-md",
+        "transition-colors duration-300",
+        scrolled ? "border-border bg-bg/95" : "border-border-soft bg-bg/70",
       )}
     >
-      {/* justify-between com a navegação centralizada em absoluto: com o menu no
-          fluxo, ele encostava no botão e deixava um vão grande depois da marca. */}
-      <div className="shell relative flex h-full items-center justify-between gap-6">
+      <div className="shell flex h-full items-center gap-8">
         <Link
           href="/"
-          className="font-display text-[0.9375rem] font-bold tracking-[0.22em] text-fg"
+          className="flex-none font-display text-[0.9375rem] font-bold tracking-[0.22em] text-fg"
           aria-label={`${SITE.name}, ir para a página inicial`}
         >
           {SITE.name}
         </Link>
 
-        <nav
-          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex"
-          aria-label="Principal"
-        >
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Principal">
           {NAV.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -51,30 +57,50 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "text-sm transition-colors duration-200",
-                  active ? "text-fg" : "text-muted hover:text-fg-soft",
+                  "relative py-1 text-sm transition-colors duration-200",
+                  active ? "text-fg" : "text-fg-soft hover:text-fg",
                 )}
               >
                 {item.label}
+                {active ? (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 -bottom-1 h-px bg-primary"
+                  />
+                ) : null}
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex flex-none items-center gap-3">
           <CommandPalette />
+
+          {/* Divisor entre busca e ação, para os dois não lerem como um bloco só. */}
+          <span aria-hidden="true" className="hidden h-5 w-px bg-border md:block" />
+
           <ButtonLink href={PRIMARY_CTA.href} size="sm" className="hidden sm:inline-flex">
             {PRIMARY_CTA.label}
           </ButtonLink>
+
           <button
             type="button"
             onClick={() => setMenuOpen((value) => !value)}
             aria-expanded={menuOpen}
             aria-controls="menu-mobile"
             aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-            className="rounded-md p-1.5 text-fg lg:hidden"
+            className="-mr-1.5 rounded-md p-1.5 text-fg lg:hidden"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
               {menuOpen ? (
                 <>
                   <path d="M18 6 6 18" />
@@ -94,7 +120,7 @@ export function SiteHeader() {
       {menuOpen ? (
         <div
           id="menu-mobile"
-          className="fixed inset-x-0 top-[--nav-h] bottom-0 z-40 overflow-y-auto border-t border-border bg-bg px-5 py-8 lg:hidden"
+          className="fixed inset-x-0 bottom-0 top-[--nav-h] z-40 overflow-y-auto border-t border-border bg-bg px-5 py-8 lg:hidden"
         >
           <nav className="flex flex-col" aria-label="Principal, versão compacta">
             {NAV.map((item) => (
