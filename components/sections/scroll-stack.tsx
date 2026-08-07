@@ -5,42 +5,40 @@ import {
   LatencyChart,
   ReliabilityChart,
 } from "@/components/architecture/chart-panel";
+import { Section, SectionHeading } from "@/components/ui/section";
 
 /**
- * Seções que cobrem a janela conforme a rolagem.
+ * Painéis que se sobrepõem durante a rolagem.
  *
- * ── O efeito, e por que a primeira versão não era ele ─────────────────────
+ * A referência é a home do GitHub: cada bloco gruda no topo e o seguinte sobe
+ * por cima dele, de modo que a narrativa se empilha em vez de simplesmente
+ * passar. Os quatro painéis contam a mesma história em quatro linguagens —
+ * código, custo, latência e incidentes —, que é a sequência que a MENENDES
+ * vende: a arquitetura muda, a conta muda, o sistema responde, e a operação
+ * para de acordar de madrugada.
  *
- * A referência é a home do GitHub. Lá cada seção ocupa a largura inteira e a
- * seguinte SOBE POR CIMA cobrindo a janela toda, como folhas empilhadas: a
- * anterior não encolhe nem desliza para o lado, ela simplesmente fica atrás.
+ * ── Como funciona, e por que não tem biblioteca de scroll ─────────────────
  *
- * A primeira tentativa aqui eram cartões dentro do container, com vão entre
- * eles e cantos arredondados, cada um grudando alguns pixels abaixo do
- * anterior. Aquilo lê como pilha de cartões, que é outra coisa: a janela nunca
- * era coberta, e a borda do de baixo continuava à mostra o tempo todo.
+ * `position: sticky` e nada mais. Cada painel gruda a uma distância do topo
+ * ligeiramente maior que a do anterior, então quando o segundo alcança o
+ * primeiro ele para logo abaixo — é essa diferença que produz a pilha visível
+ * de bordas, em vez de um painel tapando o outro por completo.
  *
- * O que produz o efeito certo:
- *
- *  1. cada seção é `sticky top-0` — todas no MESMO topo, não escalonadas;
- *  2. cada seção tem altura de tela cheia, então gruda pelo tempo exato da
- *     própria rolagem antes de a próxima chegar;
- *  3. cada seção é full-bleed e tem fundo OPACO. Sem opacidade a de baixo
- *     aparece através e a leitura de cobertura se perde;
- *  4. a ordem do documento faz o resto: a seção seguinte pinta por cima da
- *     anterior sem nenhum z-index declarado.
- *
- * ── Sem biblioteca ───────────────────────────────────────────────────────
- *
- * Nenhum listener de scroll, nenhum scroll-jacking. Bibliotecas do gênero
- * sequestram a rolagem, quebram o scroll do teclado e da barra lateral, e
- * custam caro em INP — um dos Core Web Vitals que o trabalho de SEO deste site
- * protege. Com sticky, a rolagem continua sendo a do navegador e o trabalho é
- * do compositor.
+ * Sem scroll-jacking, e isso é deliberado: bibliotecas do gênero sequestram a
+ * rolagem, quebram o scroll do teclado e da barra lateral, e custam caro em
+ * INP, que é um dos Core Web Vitals que o trabalho de SEO deste site protege.
+ * Com sticky, a rolagem continua sendo a do navegador, e o trabalho é do
+ * compositor. Não há um único listener de scroll nesta seção.
  *
  * Sob `prefers-reduced-motion` não há nada a desligar: o único movimento é o da
- * própria rolagem, que o usuário controla. E onde `sticky` não funcionar, as
- * seções simplesmente se sucedem na vertical — o conteúdo continua inteiro.
+ * própria rolagem, que o usuário controla.
+ *
+ * ── Espaçamento ───────────────────────────────────────────────────────────
+ *
+ * A seção usa `Section` e `SectionHeading`, os mesmos primitivos do resto da
+ * home, em vez de paddings próprios. A versão anterior repetia os valores à
+ * mão, e valor repetido à mão é valor que sai do lugar na primeira mudança de
+ * ritmo do site.
  */
 
 type Etapa = {
@@ -96,62 +94,48 @@ const ETAPAS: readonly Etapa[] = [
 
 export function ScrollStack() {
   return (
-    <section aria-labelledby="pilha-titulo">
-      {/* Abertura, ainda no ritmo normal da página. */}
-      <div className="shell py-16 md:py-24">
-        <div className="max-w-2xl">
-          <span className="mono-label text-primary-soft">Como a mudança aparece</span>
-          <h2 id="pilha-titulo" className="mt-4 text-3xl md:text-[2.6rem]">
-            Quatro formas de olhar
-            <span className="text-gradient"> para a mesma decisão.</span>
-          </h2>
-          <p className="mt-5 text-fg-soft md:text-lg">
-            Uma decisão de arquitetura não se justifica sozinha. Ela precisa aparecer no
-            código, na conta do mês, no tempo de resposta e no sono de quem opera.
-          </p>
+    <Section>
+      <div className="shell">
+        <SectionHeading
+          label="Como a mudança aparece"
+          title="Quatro formas de olhar"
+          accent="para a mesma decisão."
+          body="Uma decisão de arquitetura não se justifica sozinha. Ela precisa aparecer no código, na conta do mês, no tempo de resposta e no sono de quem opera."
+        />
+
+        {/* A pilha. Cada painel gruda um pouco abaixo do anterior, e é essa
+            diferença que deixa a borda do de baixo à mostra. */}
+        <div className="mt-14 flex flex-col gap-6">
+          {ETAPAS.map((etapa, index) => (
+            <article
+              key={etapa.indice}
+              className="edge sticky overflow-hidden rounded-panel border border-border bg-surface/90 backdrop-blur-sm"
+              style={{
+                // Em rem para acompanhar o zoom, e somado à altura da barra
+                // fixa para o painel não grudar atrás dela.
+                top: `calc(var(--nav-h) + ${1.25 + index * 0.7}rem)`,
+                // Sem z-index: na ordem do documento o painel seguinte já pinta
+                // por cima do anterior, que é o empilhamento desejado.
+              }}
+            >
+              <div className="grid gap-8 p-7 md:p-9 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-12">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[0.625rem] tracking-[0.16em] text-faint">
+                      {etapa.indice}
+                    </span>
+                    <span className="mono-label text-primary-soft">{etapa.rotulo}</span>
+                  </div>
+                  <h3 className="mt-5 text-2xl md:text-[1.75rem]">{etapa.titulo}</h3>
+                  <p className="mt-4 max-w-md text-fg-soft">{etapa.corpo}</p>
+                </div>
+
+                {etapa.visual}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
-
-      {ETAPAS.map((etapa) => (
-        <div
-          key={etapa.indice}
-          // `sticky top-0` em TODAS, no mesmo topo: é o que faz uma cobrir a
-          // outra em vez de escalonar. A altura de tela dá a cada uma o tempo
-          // de rolagem que ela precisa antes de ser coberta.
-          className="sticky top-0 min-h-svh border-t border-border bg-bg"
-        >
-          {/* Fio de luz na borda superior. Marca a chegada de cada folha, que
-              sobre fundo escuro seria uma transição quase invisível. */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-x-0 top-0 h-px"
-            style={{
-              background:
-                "linear-gradient(to right, transparent, color-mix(in oklab, var(--color-primary) 55%, transparent) 30%, color-mix(in oklab, var(--color-nebula) 45%, transparent) 60%, transparent)",
-            }}
-          />
-
-          {/* Só o padding do topo, e `items-center` faz o resto: com padding
-              assimétrico (py-20 mais um pt maior) os dois brigavam e o
-              conteúdo assentava abaixo do centro, com um vão morto em cima. */}
-          <div className="shell flex min-h-svh items-center pt-(--nav-h)">
-            <div className="grid w-full gap-10 lg:grid-cols-[1fr_1.15fr] lg:items-center lg:gap-16">
-              <div>
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-[0.625rem] tracking-[0.16em] text-faint">
-                    {etapa.indice}
-                  </span>
-                  <span className="mono-label text-primary-soft">{etapa.rotulo}</span>
-                </div>
-                <h3 className="mt-5 text-[clamp(1.6rem,3.4vw,2.4rem)]">{etapa.titulo}</h3>
-                <p className="mt-5 max-w-md text-fg-soft md:text-lg">{etapa.corpo}</p>
-              </div>
-
-              {etapa.visual}
-            </div>
-          </div>
-        </div>
-      ))}
-    </section>
+    </Section>
   );
 }

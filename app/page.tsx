@@ -72,7 +72,11 @@ export default function HomePage() {
         </div>
       </Section>
 
+      <SeamGlow />
+
       <ScrollStack />
+
+      <SeamGlow />
 
       <Section id="projetos">
         <div className="shell">
