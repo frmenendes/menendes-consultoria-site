@@ -53,18 +53,30 @@ export function OperationalStatus() {
 
   return (
     <>
-      {/* Estado expandido, dentro do fluxo da hero. */}
+      {/*
+        Estado expandido: faixa horizontal na largura da hero, não uma caixa.
+
+        Era uma lista vertical estreita (`max-w-sm`) encostada no canto inferior
+        esquerdo, e tinha dois problemas somados. Os valores ficavam alinhados à
+        direita, e como "READY", "ENFORCED" e "RUNNING" têm larguras diferentes,
+        os cinco pontos caíam em cinco colunas distintas — desalinhamento
+        visível numa lista cujo assunto é justamente rigor. E a caixa sobrava
+        órfã: um bloco estreito com um vão enorme à direita, muito abaixo de
+        onde a topologia termina, sem se conectar a nada.
+
+        Em faixa, cada estado ganha uma célula própria com rótulo em cima e
+        valor embaixo, então os pontos alinham por construção, e a informação
+        se distribui pela largura em vez de se amontoar num canto. Fecha a hero
+        como régua de instrumento, que é o que ela sempre quis dizer.
+      */}
       <dl
-        className="edge grid w-full max-w-sm gap-px overflow-hidden rounded-card border border-border bg-surface/70"
+        className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-border pt-7 sm:grid-cols-3 lg:grid-cols-5"
         aria-label="Postura operacional"
       >
         {OPERATIONAL_STATUS.map((item) => (
-          <div
-            key={item.key}
-            className="flex items-center justify-between gap-4 bg-surface/60 px-4 py-2.5"
-          >
+          <div key={item.key}>
             <dt className="mono-label">{item.key}</dt>
-            <dd className="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-fg-soft">
+            <dd className="mt-2.5 flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-fg">
               <Dot />
               {item.value}
             </dd>

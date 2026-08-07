@@ -48,9 +48,6 @@ export function Hero() {
               </div>
             </Reveal>
 
-            <Reveal mode="load" delay={0.32} className="mt-12">
-              <OperationalStatus />
-            </Reveal>
           </div>
 
           {/* A proporção acompanha o viewBox do grafo (200x100). Com uma caixa
@@ -68,6 +65,14 @@ export function Hero() {
             <SystemTopology />
           </div>
         </div>
+
+        {/* A faixa de estado fecha a hero atravessando as duas colunas.
+            Dentro da coluna de texto ela era uma caixa estreita encostada no
+            canto, com um vão morto à direita; na largura inteira ela vira a
+            régua que encerra a composição e amarra o texto à topologia. */}
+        <Reveal mode="load" delay={0.32} className="mt-16">
+          <OperationalStatus />
+        </Reveal>
       </div>
     </section>
   );
