@@ -294,6 +294,49 @@ export const OPERATIONAL_STATUS = [
   { key: "COST CONTROL", value: "ENABLED" },
 ] as const;
 
+/* ── Stack ───────────────────────────────────────────────────────────────── */
+
+/** Tecnologias efetivamente usadas em projeto entregue, não catálogo de desejo. */
+export const STACK: readonly string[] = [
+  "AWS",
+  "Azure",
+  "Google Cloud",
+  "Cloudflare",
+  "Kubernetes",
+  "Docker",
+  "Terraform",
+  "Pulumi",
+  "Argo CD",
+  "GitHub Actions",
+  "PostgreSQL",
+  "Redis",
+  "RabbitMQ",
+  "Kafka",
+  "Datadog",
+  "Grafana",
+  "OpenTelemetry",
+  "React",
+  "Next.js",
+  "Node",
+  "Python",
+] as const;
+
+/* ── Trilha de rastreamento ──────────────────────────────────────────────── */
+
+/**
+ * Estágios da jornada de um software, do código à operação. Alimentam a trilha
+ * lateral da home: é marcação visual da cadeia, não índice navegável.
+ */
+export const TRACE_STAGES = [
+  { index: "01", name: "SOURCE", tech: ["Git", "Code review"] },
+  { index: "02", name: "DEPENDENCIES", tech: ["npm", "pip", "SBOM"] },
+  { index: "03", name: "BUILD", tech: ["Actions", "Docker"] },
+  { index: "04", name: "DEPLOY", tech: ["Terraform", "Argo CD"] },
+  { index: "05", name: "RUNTIME", tech: ["Kubernetes", "ECS"] },
+  { index: "06", name: "DATA", tech: ["PostgreSQL", "Redis"] },
+  { index: "07", name: "OBSERVE", tech: ["OpenTelemetry", "SLO"] },
+] as const;
+
 /* ── Projetos ────────────────────────────────────────────────────────────── */
 
 export type Project = {

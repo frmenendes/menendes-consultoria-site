@@ -254,6 +254,56 @@
   .trace-pulse {
     animation: trace-pulse 3.2s var(--ease-in-out-soft) infinite;
   }
+
+  /* Trilha lateral: o preenchimento acompanha a rolagem do documento, e os
+     pulsos correm em laço independente disso. */
+  @supports (animation-timeline: scroll()) {
+    .trace-rail-fill {
+      animation: trace-rail-fill linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  .trace-rail-pulse {
+    animation: trace-rail-pulse 7s linear infinite;
+  }
+
+  /* Barras de telemetria. Cada uma recebe duração e atraso próprios no
+     componente, então o conjunto nunca cai em sincronia. */
+  .signal-bar {
+    animation-name: signal-bar;
+    animation-timing-function: var(--ease-in-out-soft);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    transform-origin: bottom;
+  }
+
+  /* Cursor piscando, para blocos com cara de terminal. */
+  .caret {
+    animation: caret 1.1s steps(1) infinite;
+  }
+}
+
+@keyframes signal-bar {
+  from { transform: scaleY(0.35); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes caret {
+  0%, 50%   { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+@keyframes trace-rail-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes trace-rail-pulse {
+  0%   { transform: translateY(-10vh); opacity: 0; }
+  8%   { opacity: 0.85; }
+  92%  { opacity: 0.85; }
+  100% { transform: translateY(100vh); opacity: 0; }
 }
 
 @keyframes trace-draw {

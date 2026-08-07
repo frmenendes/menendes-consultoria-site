@@ -6,7 +6,7 @@ import { CallToAction } from "@/components/sections/cta";
 import { CapabilityGrid } from "@/components/architecture/capability-grid";
 import { ArchitectureTransformation } from "@/components/architecture/architecture-transformation";
 import { ProjectReveal } from "@/components/architecture/project-reveal";
-import { TraceLink } from "@/components/architecture/trace-link";
+import { TraceRail } from "@/components/architecture/trace-rail";
 import { Reveal } from "@/components/motion/reveal";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { ArrowRight, ButtonLink } from "@/components/ui/button";
@@ -14,18 +14,17 @@ import { OFFERINGS } from "@/lib/content";
 
 export default function HomePage() {
   return (
-    <>
+    <div className="relative">
+      <TraceRail />
+
       <Hero />
 
-      <TraceLink index="01" stage="SOURCE" tech={["Git", "Monorepo", "Code review"]} />
 
       <Manifesto />
 
-      <TraceLink index="02" stage="DEPENDENCIES" tech={["npm", "pip", "go mod", "SBOM"]} />
 
       <TwoPaths />
 
-      <TraceLink index="03" stage="BUILD" tech={["GitHub Actions", "Docker", "Testes"]} />
 
       <Section id="expertise">
         <div className="shell">
@@ -41,7 +40,6 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <TraceLink index="04" stage="DEPLOY" tech={["Terraform", "Pulumi", "Argo CD", "Rollback"]} />
 
       <Section>
         <div className="shell">
@@ -69,7 +67,6 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <TraceLink index="05" stage="RUNTIME" tech={["Kubernetes", "ECS", "Node", "Python", "Go"]} />
 
       <Section id="projetos">
         <div className="shell">
@@ -85,7 +82,6 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <TraceLink index="06" stage="DATA" tech={["PostgreSQL", "Redis", "Kafka", "Filas"]} />
 
       <Section>
         <div className="shell">
@@ -128,9 +124,8 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <TraceLink index="07" stage="OBSERVE" tech={["OpenTelemetry", "Grafana", "Datadog", "SLO"]} />
 
       <CallToAction />
-    </>
+    </div>
   );
 }
