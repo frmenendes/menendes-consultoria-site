@@ -87,9 +87,22 @@ export async function POST(request: Request): Promise<Response> {
   const from = env.CONTACT_FROM;
 
   if (!apiKey || !to || !from) {
-    // Falta de configuração é erro de operação, não do visitante. Registra para
-    // o log do Worker e devolve uma saída alternativa.
-    console.error("[contato] RESEND_API_KEY, CONTACT_TO ou CONTACT_FROM ausente");
+    // Falta de configuração é erro de operação, não do visitante. O log do
+    // Worker é privado, então pode nomear exatamente o que falta; a resposta
+    // pública continua genérica, sem revelar estado de infraestrutura.
+    // Para ver isto: `npx wrangler tail menendes-consultoria-site`.
+    const ausentes = [
+      !apiKey && "RESEND_API_KEY",
+      !to && "CONTACT_TO",
+      !from && "CONTACT_FROM",
+    ].filter(Boolean);
+    const contextoOk = Object.keys(env).length > 0;
+    console.error(
+      `[contato] secrets ausentes: ${ausentes.join(", ")}. ` +
+        `Bindings visíveis ao Worker: ${contextoOk ? Object.keys(env).join(", ") : "nenhum"}. ` +
+        `Se a lista de bindings estiver vazia, o problema não são os secrets: ` +
+        `é o contexto da Cloudflare não estar disponível para a rota.`,
+    );
     return json(
       { ok: false, error: "Não foi possível enviar agora. Escreva para o e-mail no rodapé." },
       503,
