@@ -37,8 +37,10 @@ export default function HomePage() {
             accent="uma operação inteira."
             body="Elas quase nunca chegam sozinhas. Um problema de custo costuma ser um problema de arquitetura, e uma falha recorrente costuma ser um problema de observabilidade."
           />
+          {/* Resumido: detail e lista de tecnologias vivem só em /servicos.
+              Ver a nota sobre canibalização em capability-grid.tsx. */}
           <div className="mt-14">
-            <CapabilityGrid />
+            <CapabilityGrid compact />
           </div>
         </div>
       </Section>
@@ -79,8 +81,10 @@ export default function HomePage() {
             accent="e consequência."
             body="Cada case abre com a restrição que existia e a decisão que ela obrigou. É o que costuma faltar quando alguém apresenta apenas o resultado."
           />
+          {/* Resumido: o resumo de cada case vive em /projetos.
+              Ver a nota em project-reveal.tsx. */}
           <div className="mt-14">
-            <ProjectReveal />
+            <ProjectReveal compact />
           </div>
         </div>
       </Section>
@@ -102,14 +106,9 @@ export default function HomePage() {
                   <span className="font-mono text-xs text-primary-soft">{offering.index}</span>
                   <h3 className="mt-4 text-xl">{offering.title}</h3>
                   <p className="mt-3 text-sm text-fg-soft">{offering.summary}</p>
-                  <ul className="mt-5 space-y-2 border-t border-border-soft pt-5">
-                    {offering.includes.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
-                        <span className="mt-2 h-1 w-1 flex-none rounded-full bg-primary" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  {/* O que cada modelo inclui fica em /servicos. Aqui a home
+                      apresenta as quatro portas de entrada; lá se decide por
+                      qual entrar. */}
                 </Reveal>
               </li>
             ))}

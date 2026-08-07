@@ -22,7 +22,18 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  *  - Escape fecha;
  *  - o scroll do documento trava enquanto está aberto.
  */
-export function ProjectReveal() {
+/**
+ * `compact` omite o resumo de cada case.
+ *
+ * Mesma razão do `compact` do CapabilityGrid: a home e a /projetos listavam os
+ * mesmos quatro resumos, e medido, 75% do texto da /projetos já estava na home.
+ * Duas URLs com o mesmo conteúdo disputam a mesma consulta e dividem sinais.
+ *
+ * Na home ficam categoria e cliente — o bastante para dar vontade de abrir —, e
+ * o resumo passa a ser a razão de existir da /projetos. Casa também com o que a
+ * hero promete: "conheça alguns dos projetos".
+ */
+export function ProjectReveal({ compact = false }: { compact?: boolean } = {}) {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>());
   const open = PROJECTS.find((project) => project.slug === openSlug) ?? null;
@@ -54,9 +65,11 @@ export function ProjectReveal() {
                 <span className="mt-2 block text-xl text-fg transition-colors group-hover:text-primary-soft md:text-2xl">
                   {project.client}
                 </span>
-                <span className="mt-1.5 block max-w-xl text-sm text-muted">
-                  {project.summary}
-                </span>
+                {compact ? null : (
+                  <span className="mt-1.5 block max-w-xl text-sm text-muted">
+                    {project.summary}
+                  </span>
+                )}
               </span>
 
               <ArrowRight className="mr-1 flex-none text-muted transition-colors group-hover:text-primary-soft" />

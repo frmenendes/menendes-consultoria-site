@@ -100,7 +100,7 @@ export function ArchitectureTransformation() {
       <div className="grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-start">
         {/* Diagrama */}
         <div
-          className="edge relative aspect-[4/3] w-full overflow-hidden rounded-panel border border-border bg-surface/40 md:aspect-[16/10]"
+          className="edge @container relative aspect-[4/3] w-full overflow-hidden rounded-panel border border-border bg-surface/40 md:aspect-[16/10]"
           aria-hidden="true"
         >
           <div className="blueprint mask-fade absolute inset-0 opacity-40" />
@@ -134,8 +134,40 @@ export function ArchitectureTransformation() {
                   delay: reduced ? 0 : index * 0.035,
                 }}
               >
+                {/*
+                  O rótulo quebra em duas linhas nas telas estreitas.
+
+                  As posições são percentuais, mas a caixa do rótulo tem
+                  largura absoluta: numa tela larga sobra espaço, e numa
+                  estreita as caixas se encontram. Medido, o estado organizado
+                  começava a sobrepor abaixo de ~500px de contêiner
+                  ("Autenticação e autorização" sobre "Banco de dados"), e a
+                  320px dois rótulos vazavam a moldura. É o pior lugar possível
+                  para isso acontecer: o estado organizado existe justamente
+                  para contrastar com o emaranhado, e no celular ele virava
+                  outro emaranhado.
+
+                  Deixar quebrar resolve na raiz, porque ataca a largura em vez
+                  de remendar posição por breakpoint. `max-w` dá o ponto de
+                  quebra e `text-center` mantém o bloco equilibrado sob o eixo
+                  do componente.
+
+                  A consulta é de CONTÊINER, não de viewport, e isso é o ponto:
+                  o que causa a colisão é a largura do diagrama, não a da tela.
+                  O diagrama ocupa 1.35fr de duas colunas a partir de `lg`, então
+                  numa viewport de 1024px ele mede ~550px — já dentro da faixa de
+                  colisão, embora `sm:` estivesse ativo há muito. Medido, 560px
+                  de contêiner é onde as caixas param de se encontrar.
+
+                  O limite de 5.5rem (88px) sai do pior caso: a 320px de
+                  contêiner, o vão entre as colunas x=44% e x=72% é de 90px. A
+                  fonte cai junto para 9px porque "Autenticação" sozinha não
+                  caberia em 88px a 10px, e quebraria no meio da palavra;
+                  `break-words` é a rede de segurança para qualquer rótulo
+                  futuro que seja mais longo que estes.
+                */}
                 <motion.span
-                  className="block whitespace-nowrap rounded-md border px-2.5 py-1.5 font-mono text-[0.625rem]"
+                  className="block max-w-[5.5rem] break-words whitespace-normal rounded-md border px-2 py-1.5 text-center font-mono text-[0.5625rem] leading-snug @min-[560px]:max-w-none @min-[560px]:break-normal @min-[560px]:whitespace-nowrap @min-[560px]:px-2.5 @min-[560px]:text-left @min-[560px]:text-[0.625rem]"
                   animate={{
                     borderColor: scaled
                       ? "var(--color-border-strong)"

@@ -20,6 +20,19 @@ import { cn } from "@/lib/utils";
  * desktop e no toque. O hover voltou a ser o que deveria ser, um realce.
  *
  * Sem estado, o componente também deixou de precisar rodar no cliente.
+ *
+ * `compact` existe por SEO, não por estética.
+ *
+ * A home e a /servicos renderizavam este grid idêntico, e medido, 92% do texto
+ * da /servicos já estava na home. Isso não gera penalidade — duplicata dentro
+ * do próprio site não é penalizada —, mas canibaliza: duas URLs disputando a
+ * mesma consulta dividem sinais, e o Google escolhe uma. Sendo a home mais
+ * forte, a /servicos tende a nunca ranquear para a busca que ela deveria ganhar.
+ *
+ * Então a home passa a mostrar título e claim, o suficiente para dar a dimensão
+ * e levar adiante, e a /servicos fica com detail e a lista de tecnologias. Cada
+ * URL passa a ter uma razão própria de existir, que é o que os dois lados
+ * pedem: o buscador e quem lê.
  */
 
 const SPAN: Record<Capability["span"], string> = {
@@ -27,12 +40,12 @@ const SPAN: Record<Capability["span"], string> = {
   normal: "",
 };
 
-export function CapabilityGrid() {
+export function CapabilityGrid({ compact = false }: { compact?: boolean } = {}) {
   return (
     <ul className="grid grid-cols-1 gap-3 md:auto-rows-fr md:grid-cols-3">
       {CAPABILITIES.map((capability, index) => (
         <li key={capability.slug} className={SPAN[capability.span]}>
-          <CapabilityCard capability={capability} index={index} />
+          <CapabilityCard capability={capability} index={index} compact={compact} />
         </li>
       ))}
     </ul>
@@ -42,9 +55,11 @@ export function CapabilityGrid() {
 function CapabilityCard({
   capability,
   index,
+  compact,
 }: {
   capability: Capability;
   index: number;
+  compact: boolean;
 }) {
   return (
     <article
@@ -78,17 +93,21 @@ function CapabilityCard({
         {capability.claim}
       </p>
 
-      <p className="relative mt-4 max-w-lg text-sm leading-relaxed text-fg-soft">
-        {capability.detail}
-      </p>
+      {compact ? null : (
+        <>
+          <p className="relative mt-4 max-w-lg text-sm leading-relaxed text-fg-soft">
+            {capability.detail}
+          </p>
 
-      <ul className="relative mt-6 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-border-soft pt-4">
-        {capability.items.map((item) => (
-          <li key={item} className="font-mono text-[0.6875rem] text-faint">
-            {item}
-          </li>
-        ))}
-      </ul>
+          <ul className="relative mt-6 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-border-soft pt-4">
+            {capability.items.map((item) => (
+              <li key={item} className="font-mono text-[0.6875rem] text-faint">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </article>
   );
 }
