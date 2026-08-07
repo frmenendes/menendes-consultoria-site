@@ -21,22 +21,22 @@ export function Hero() {
       <div className="shell relative w-full py-16">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-10">
           <div>
-            <Reveal y={0}>
+            <Reveal mode="load">
               <p className="mono-label text-primary-soft">{SITE.name}</p>
             </Reveal>
 
-            <Reveal delay={0.08}>
+            <Reveal mode="load" delay={0.08}>
               <h1 className="mt-6 text-[clamp(2.3rem,5vw,4rem)]">
                 Tecnologia para empresas que{" "}
                 <span className="text-gradient">não podem parar.</span>
               </h1>
             </Reveal>
 
-            <Reveal delay={0.16}>
+            <Reveal mode="load" delay={0.16}>
               <p className="mt-7 max-w-lg text-lg text-fg-soft">{SITE.description}</p>
             </Reveal>
 
-            <Reveal delay={0.24}>
+            <Reveal mode="load" delay={0.24}>
               <div className="mt-9 flex flex-wrap gap-3">
                 <ButtonLink href="/projetos" className="group">
                   Conheça os projetos
@@ -48,7 +48,7 @@ export function Hero() {
               </div>
             </Reveal>
 
-            <Reveal delay={0.32} className="mt-12">
+            <Reveal mode="load" delay={0.32} className="mt-12">
               <OperationalStatus />
             </Reveal>
           </div>

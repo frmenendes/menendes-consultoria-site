@@ -24,17 +24,17 @@ export function PageHero({
         }}
       />
       <div className="shell relative">
-        <Reveal y={0}>
+        <Reveal mode="load">
           <MonoLabel className="text-primary-soft">{label}</MonoLabel>
         </Reveal>
-        <Reveal delay={0.08}>
+        <Reveal mode="load" delay={0.08}>
           <h1 className="mt-5 max-w-3xl text-[clamp(2.1rem,5vw,3.6rem)]">
             {title}
             {accent ? <span className="text-gradient"> {accent}</span> : null}
           </h1>
         </Reveal>
         {body ? (
-          <Reveal delay={0.16}>
+          <Reveal mode="load" delay={0.16}>
             <p className="mt-6 max-w-2xl text-lg text-fg-soft">{body}</p>
           </Reveal>
         ) : null}

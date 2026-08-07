@@ -79,9 +79,14 @@ export function SiteHeader() {
           {/* Divisor entre busca e ação, para os dois não lerem como um bloco só. */}
           <span aria-hidden="true" className="hidden h-5 w-px bg-border md:block" />
 
-          <ButtonLink href={PRIMARY_CTA.href} size="sm" className="hidden sm:inline-flex">
-            {PRIMARY_CTA.label}
-          </ButtonLink>
+          {/* A visibilidade fica no wrapper, não no botão: o `hidden` passado
+              como className disputa com o `inline-flex` da base do ButtonLink,
+              e quem vence depende da ordem no CSS gerado, não da ordem escrita. */}
+          <span className="hidden sm:block">
+            <ButtonLink href={PRIMARY_CTA.href} size="sm">
+              {PRIMARY_CTA.label}
+            </ButtonLink>
+          </span>
 
           <button
             type="button"

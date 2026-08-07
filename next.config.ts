@@ -28,16 +28,27 @@ import type { NextConfig } from "next";
  * origem precisa ser declarada aqui de forma explícita, e vale reavaliar a
  * troca por nonce nas rotas afetadas.
  */
+/**
+ * Cloudflare Web Analytics. É injetado pela borda, não pelo nosso HTML, então
+ * precisa estar declarado aqui ou o navegador bloqueia o beacon. É a única
+ * origem de terceiro do site, e não usa cookie.
+ */
+const CF_INSIGHTS = "https://static.cloudflareinsights.com";
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline' ${CF_INSIGHTS}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  `connect-src 'self' ${CF_INSIGHTS} https://cloudflareinsights.com`,
   "form-action 'self'",
-  "frame-ancestors 'none'",
-  "frame-src 'none'",
+  // 'self' em vez de 'none': clickjacking exige uma origem diferente, então
+  // same-origin continua seguro, e isso permite abrir o site dentro de um
+  // iframe local para conferir os breakpoints em largura real.
+  "frame-ancestors 'self'",
+  // 'self' para permitir enquadrar o próprio site (conferência de breakpoints).
+  "frame-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
   "upgrade-insecure-requests",
@@ -55,7 +66,7 @@ const SECURITY_HEADERS = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
-  { key: "X-Frame-Options", value: "DENY" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 

@@ -1,45 +1,44 @@
-"use client";
+import { cn } from "@/lib/utils";
 
-import { motion, useInView } from "motion/react";
-import { useRef } from "react";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
-
-type RevealProps = {
+/**
+ * Revelação de bloco, em CSS puro.
+ *
+ * Não é componente de cliente e não carrega estado. A versão anterior usava o
+ * useInView do motion: o bloco montava em opacity 0 e só aparecia quando o
+ * observador disparasse. Em produção o observador não disparou e a página
+ * inteira ficou invisível. O modo de falha estava invertido, porque um efeito
+ * decorativo não pode ter poder de esconder o conteúdo.
+ *
+ * Agora o padrão é visível e a animação é enriquecimento. Sem JavaScript, sem
+ * suporte a scroll-driven animations ou com reduced motion, o conteúdo aparece
+ * do mesmo jeito.
+ *
+ * `mode`:
+ *  - "scroll" revela ao entrar na viewport, via animation-timeline;
+ *  - "load" revela no carregamento, para o que já nasce na primeira tela e
+ *    portanto nunca cruzaria um limiar de scroll.
+ *
+ * `delay` só vale no modo "load". No modo "scroll" a própria posição de rolagem
+ * já escalona os blocos, e atrasar dentro de uma timeline de scroll produziria
+ * elementos parados no meio da tela.
+ */
+export function Reveal({
+  children,
+  delay = 0,
+  className,
+  mode = "scroll",
+}: {
   children: React.ReactNode;
   delay?: number;
   className?: string;
-  /** Distância do deslocamento inicial. 0 revela só com opacidade. */
-  y?: number;
-};
-
-/**
- * Revelação padrão de bloco. Anima apenas opacity e transform, então roda no
- * compositor. Sob reduced motion o conteúdo aparece sem transição alguma.
- */
-export function Reveal({ children, delay = 0, className, y = 18 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -12% 0px" });
-  const reduced = useReducedMotion();
-
-  if (reduced) {
-    return (
-      <div ref={ref} className={className}>
-        {children}
-      </div>
-    );
-  }
-
+  mode?: "scroll" | "load";
+}) {
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+    <div
+      className={cn(mode === "load" ? "reveal-on-load" : "reveal-on-scroll", className)}
+      style={mode === "load" && delay ? { animationDelay: `${delay}s` } : undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
