@@ -1,0 +1,71 @@
+Toda conversa sobre custo de nuvem começa no lugar errado. Alguém abre o
+relatório de faturamento, encontra o serviço mais caro e pergunta como reduzir
+aquela linha. A resposta quase sempre existe, dá uma economia de um dígito
+percentual, e três meses depois o custo voltou ao que era.
+
+Isso acontece porque a fatura não é onde o custo é decidido. Ela é onde o custo
+é reportado.
+
+## Onde o custo nasce
+
+O custo de uma plataforma é definido em três lugares, todos anteriores à
+infraestrutura.
+
+**No acoplamento.** Quando interface, regra de negócio e persistência estão no
+mesmo componente, a unidade de escala é o componente inteiro. Um pico de leitura
+numa tela obriga a escalar o processamento de pagamento junto, porque eles são a
+mesma coisa. Você paga capacidade que não precisava só porque não há fronteira
+para escalar separadamente.
+
+**No modelo de dados.** Consulta que não usa índice, tabela que cresce sem
+particionamento, relatório que varre o histórico inteiro a cada abertura. O
+banco responde aumentando de tamanho, e o tamanho do banco costuma ser a linha
+que mais cresce numa fatura de produto em crescimento. Nenhuma escolha de
+instância corrige um modelo que obriga a varredura completa.
+
+**No que roda de forma síncrona sem precisar.** Gerar um PDF, enviar um e-mail,
+chamar uma API de terceiro, recalcular um agregado. Se acontece dentro do ciclo
+da requisição, o tempo de resposta vira capacidade reservada, e capacidade
+reservada é dinheiro parado esperando. Mover isso para uma fila costuma reduzir
+mais custo do que qualquer negociação de contrato.
+
+## Por que right sizing sozinho decepciona
+
+Ajustar tamanho de instância, comprar capacidade reservada e desligar ambiente
+ocioso são medidas legítimas. Elas têm um teto: você está otimizando o preço da
+capacidade, não a quantidade de capacidade que a arquitetura exige.
+
+Se a arquitetura exige o dobro do necessário, o melhor desconto possível ainda
+deixa você pagando o dobro, com desconto.
+
+A ordem que funciona é a inversa. Primeiro reduza a demanda que a arquitetura
+cria, depois otimize o preço do que sobrou. Fazer o contrário significa comprar
+capacidade reservada de três anos para uma carga que uma fila teria eliminado.
+
+## O número que muda a conversa
+
+A métrica mais útil não é o custo total. É o custo por cliente e o custo por
+transação.
+
+O total só permite perguntar se está caro. O custo unitário permite perguntar se
+está caro **em relação ao que gera**, que é a única pergunta que a diretoria
+consegue responder. Ele também revela o que o total esconde: um cliente que
+consome dez vezes a média, um endpoint que custa mais do que a operação que
+executa, uma funcionalidade cuja receita não paga a infraestrutura.
+
+Para chegar nesse número é preciso governança de tags desde o início. Atribuir
+custo por domínio depois que o ambiente já cresceu é um trabalho de arqueologia
+que costuma terminar em estimativa.
+
+## Onde isso encontra a arquitetura
+
+A consequência prática é que decisão de custo e decisão de arquitetura são a
+mesma decisão, tomada em momentos diferentes.
+
+Escolher entre síncrono e assíncrono é uma decisão de custo. Escolher se o
+isolamento entre clientes acontece no dado ou na aplicação é uma decisão de
+custo. Escolher se o relatório lê da base transacional ou de uma réplica é uma
+decisão de custo.
+
+Nenhuma delas aparece assim na hora em que é tomada. Todas aparecem assim na
+fatura, entre seis e dezoito meses depois.

@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   MENENDES — design system
+   Conceito: engenharia editorial futurista.
+   Base grafite (nunca preto absoluto), azul elétrico como cor de decisão,
+   lima e violeta apenas como pulso e estado. Tudo semântico: os componentes
+   nunca referenciam um hex, só o papel que a cor cumpre.
+   ========================================================================== */
+
+@theme {
+  /* --- superfícies (grafite em camadas) --- */
+  --color-bg: #0a0c10;
+  --color-surface: #0e1118;
+  --color-surface-2: #141924;
+  --color-surface-3: #1c2330;
+
+  /* --- texto (branco levemente quente) --- */
+  --color-fg: #edeae4;
+  --color-fg-soft: #b9bcc4;
+  --color-muted: #7f8592;
+  --color-faint: #565c6a;
+
+  /* --- estrutura --- */
+  --color-border: #232a38;
+  --color-border-soft: #171d27;
+  --color-border-strong: #313a4d;
+
+  /* --- marca --- */
+  --color-primary: #3d7bff;
+  --color-primary-soft: #7ba3ff;
+  --color-primary-deep: #1f4fd8;
+
+  /* --- pulsos e estados (uso restrito) --- */
+  --color-accent: #a78bfa;
+  --color-signal: #b4f461;
+  --color-success: #4ade80;
+  --color-warning: #f5a524;
+  --color-danger: #f04438;
+
+  /* --- tipografia --- */
+  --font-display: var(--font-space-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
+
+  /* --- ritmo --- */
+  --radius-card: 14px;
+  --radius-panel: 20px;
+
+  /* --- movimento: uma curva só, para o site inteiro ter a mesma "física" --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    /* Altura da barra fixa, usada por scroll-margin e paddings de topo. */
+    --nav-h: 72px;
+  }
+
+  * {
+    border-color: var(--color-border-soft);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Ruído muito suave: tira o "plástico" do grafite chapado sem virar textura.
+       É um SVG inline, então não custa requisição. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.06;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco sempre visível e sempre igual: requisito de acessibilidade, não estilo. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-soft);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  /* Âncoras não somem atrás da barra fixa. */
+  [id] {
+    scroll-margin-top: calc(var(--nav-h) + 24px);
+  }
+}
+
+@layer utilities {
+  /* Largura editorial padrão do site. */
+  .shell {
+    width: min(1200px, calc(100% - 2.5rem));
+    margin-inline: auto;
+  }
+
+  .shell-narrow {
+    width: min(760px, calc(100% - 2.5rem));
+    margin-inline: auto;
+  }
+
+  /* Label técnico monoespaçado: usado em métricas, estados e eyebrows. */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Grid estrutural de fundo. Puramente decorativo, sempre aria-hidden. */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, var(--color-border-soft) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-border-soft) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Máscara radial para o grid não bater nas bordas com aresta dura. */
+  .mask-fade {
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+  }
+
+  /* Trecho de destaque dos títulos.
+     Vai de azul a violeta, e não de branco a azul: partindo do branco, o ponto
+     de virada cai no meio de uma palavra e parece defeito. Começando já no azul,
+     o gradiente lê como sheen, não como corte.
+     box-decoration-break clone dá a cada fragmento de linha seu próprio box de
+     fundo, então uma frase que quebra em duas linhas não perde a cor na
+     primeira. */
+  .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-primary-soft) 0%,
+      var(--color-accent) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    color: transparent;
+  }
+
+  /* Borda de 1px que reage à luz, como chapa metálica. Não é glassmorphism:
+     não há blur, só um highlight no topo da superfície. */
+  .edge {
+    position: relative;
+  }
+  .edge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, var(--color-border-strong), transparent 45%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* prefers-reduced-motion é requisito, não cortesia: nenhuma animação do site
+   pode depender de movimento para comunicar. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

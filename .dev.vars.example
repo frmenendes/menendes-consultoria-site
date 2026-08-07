@@ -1,0 +1,6 @@
+# Modelo dos secrets. Copie para `.dev.vars` e preencha com valores reais.
+# `.dev.vars` é ignorado pelo git; este arquivo, não. Nunca coloque a chave aqui.
+
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
+CONTACT_FROM=Site MENENDES <contato@mail.menendes.com.br>
+CONTACT_TO=contato@menendes.com.br

@@ -1,0 +1,81 @@
+Um MVP gerado com assistência de IA faz exatamente o que precisava fazer:
+transforma uma ideia em algo clicável em dias, e permite descobrir se alguém
+quer aquilo antes de investir meses. Isso é uma vitória, não um débito.
+
+O débito aparece depois, quando a resposta é sim.
+
+A partir do momento em que existem usuários reais, com dados reais e dinheiro
+real, a aplicação passa a ser cobrada por propriedades que ninguém pediu na fase
+de validação. Elas costumam ceder numa ordem previsível.
+
+## Primeiro: autorização
+
+É quase sempre o primeiro a quebrar, e o mais perigoso, porque falha em silêncio.
+
+O padrão típico é uma tela que só mostra os dados do usuário atual, com a
+filtragem acontecendo na consulta que a interface monta. Funciona perfeitamente
+enquanto todo mundo usa a interface. Mas a interface conversa com uma API, e a
+API aceita o parâmetro que receber. Trocar um identificador na requisição retorna
+o dado de outra pessoa.
+
+Não há erro, não há alerta, não há log. O sistema fez o que foi pedido.
+
+A correção não é validar melhor no frontend. É mover a decisão de acesso para
+dentro do servidor, e de preferência para dentro do dado, de forma que a consulta
+seja incapaz de retornar o que não pertence a quem perguntou.
+
+## Segundo: o banco
+
+Ferramentas de geração costumam conectar a interface diretamente ao banco, com
+uma chave que o navegador precisa conhecer. Isso resolve o problema de ter que
+escrever uma API, ao custo de expor a superfície inteira do dado.
+
+Some a isso ausência de índice em campo de busca, ausência de particionamento no
+que cresce sem parar, e migração aplicada direto em produção sem versionamento.
+Cada um desses é tolerável isolado. Juntos, produzem um banco que fica lento antes
+de ficar grande, e que ninguém tem coragem de alterar.
+
+## Terceiro: ambientes e reversibilidade
+
+Existe um ambiente. É produção.
+
+Sem ambiente separado, toda mudança é testada com usuário real. Sem
+versionamento consistente, não há para onde voltar. Sem rollback, o plano de
+contingência é corrigir para frente sob pressão, que é quando as piores decisões
+técnicas são tomadas.
+
+Este é o item que mais assusta fundadores quando fica explícito, e o mais barato
+de resolver dos três.
+
+## Quarto: custo
+
+Chega junto com o crescimento e sempre surpreende, porque a fase de validação
+tem custo desprezível e cria a expectativa errada.
+
+Consulta sem índice multiplicada por dez mil sessões, processamento síncrono que
+segura capacidade, chamada a modelo de linguagem sem limite por usuário nem
+cache. A conta cresce mais rápido que a receita, e a diferença entre os dois é
+descoberta na fatura.
+
+## Quinto: dependência da ferramenta
+
+O último a doer e o mais difícil de reverter.
+
+Quando lógica de negócio, esquema de dados, autenticação e publicação estão todos
+expressos no formato de uma plataforma específica, sair dela deixa de ser uma
+decisão técnica e vira um projeto. A ferramenta que deu velocidade no início
+passa a definir o teto.
+
+## A ordem da correção não é a ordem da falha
+
+Um detalhe contraintuitivo: a sequência acima descreve a ordem em que os
+problemas aparecem, não a ordem em que devem ser resolvidos.
+
+Vale estabilizar antes de arquitetar. Fechar autorização, tirar a chave do
+navegador, criar um ambiente separado e garantir backup restaurável vem primeiro,
+mesmo que a arquitetura continue feia por mais algumas semanas. Reescrever a
+arquitetura sobre uma base que ainda está vazando significa migrar o vazamento
+junto, com mais confiança e menos visibilidade.
+
+Arquitetura bonita com autorização quebrada é só um incidente mais bem
+organizado.

@@ -1,0 +1,70 @@
+Existe uma sequência que se repete. O produto cresce, a carga aumenta, algo fica
+lento, e alguém pergunta o que está acontecendo. A resposta honesta é que
+ninguém sabe, porque não há como saber. Aí começa o projeto de observabilidade,
+conduzido sob pressão, durante o incidente que ele deveria ter prevenido.
+
+Instrumentar depois é caro por um motivo específico: você precisa adivinhar onde
+olhar, e adivinha sob estresse.
+
+## O que observabilidade responde
+
+Vale separar monitoramento de observabilidade, porque a confusão entre os dois é
+o que produz painel bonito e diagnóstico impossível.
+
+Monitoramento responde perguntas que você previu. O serviço está de pé, a
+latência passou do limite, o disco está enchendo. São perguntas conhecidas com
+respostas conhecidas.
+
+Observabilidade responde perguntas que você não previu. Por que este cliente
+específico teve lentidão nesta operação específica na terça à tarde. Ninguém
+cria um alerta para isso de antemão. Ou o sistema permite reconstruir o caminho,
+ou não permite.
+
+A diferença prática aparece exatamente no incidente que importa, que é sempre o
+que ninguém antecipou.
+
+## O mínimo que precisa existir antes de escalar
+
+Não é preciso instrumentar tudo. É preciso instrumentar o que permite navegar do
+sintoma até a causa.
+
+**Correlação.** Um identificador que acompanha a requisição por todos os
+componentes que ela toca. Sem isso, você tem registros de vários serviços e
+nenhuma forma de saber quais pertencem à mesma história. É o item de maior
+retorno e o mais barato, desde que decidido cedo.
+
+**Log estruturado.** Evento com campos, não frase. Texto livre é legível por
+humano e inútil para consulta. No volume em que o incidente acontece, ninguém lê,
+todo mundo filtra.
+
+**As quatro métricas de saúde.** Taxa de requisição, taxa de erro, latência nos
+percentis altos e saturação do recurso. Média de latência esconde exatamente o
+usuário que está sofrendo, que é quem reclama.
+
+**Rastreio distribuído no caminho crítico.** Não em tudo. No fluxo que gera
+receita e no fluxo que já falhou antes.
+
+**Um alerta que alguém atende.** Alerta que ninguém age treina o time a ignorar
+alerta, e um time que ignora alerta é pior do que um time sem alerta, porque
+acredita estar coberto.
+
+## O que pode esperar
+
+Painel executivo. Retenção longa de log. Cobertura de rastreio em caminho
+secundário. Detecção de anomalia. Tudo isso é bom e tudo isso é posterior.
+
+Nenhum deles ajuda a diagnosticar o primeiro incidente sério. Correlação e log
+estruturado ajudam.
+
+## Por que a ordem importa
+
+Escalar um sistema que você não consegue observar não é escalar, é aumentar a
+área de superfície do que pode falhar sem explicação.
+
+Cada componente novo adiciona um lugar onde a latência pode nascer. Cada réplica
+adiciona um lugar onde o comportamento pode divergir. Cada fila adiciona um lugar
+onde a mensagem pode parar. Sem instrumentação, o crescimento converte um sistema
+que você entendia num sistema que você opera por tentativa.
+
+Observabilidade antes da escala não é rigor. É a diferença entre um incidente que
+dura vinte minutos e um que dura o fim de semana.
