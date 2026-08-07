@@ -236,6 +236,50 @@
   .reveal-line {
     animation: reveal-line 0.85s var(--ease-out-expo) both;
   }
+
+  /* Elo de rastreamento entre seções.
+     A linha se desenha conforme o trecho entra na viewport, e um pulso desce
+     por ela em laço. O pulso é o que faz a cadeia parecer monitorada em vez de
+     apenas ilustrada. Sem suporte a animation-timeline, a linha já aparece
+     inteira: só o desenho progressivo se perde. */
+  @supports (animation-timeline: view()) {
+    .trace-draw {
+      transform-origin: top;
+      animation: trace-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+
+  .trace-pulse {
+    animation: trace-pulse 3.2s var(--ease-in-out-soft) infinite;
+  }
+}
+
+@keyframes trace-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes trace-pulse {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(400%);
+    opacity: 0;
+  }
 }
 
 /* prefers-reduced-motion é requisito, não cortesia: nenhuma animação do site

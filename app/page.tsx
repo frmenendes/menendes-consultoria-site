@@ -6,6 +6,7 @@ import { CallToAction } from "@/components/sections/cta";
 import { CapabilityGrid } from "@/components/architecture/capability-grid";
 import { ArchitectureTransformation } from "@/components/architecture/architecture-transformation";
 import { ProjectReveal } from "@/components/architecture/project-reveal";
+import { TraceLink } from "@/components/architecture/trace-link";
 import { Reveal } from "@/components/motion/reveal";
 import { Section, SectionHeading } from "@/components/ui/section";
 import { ArrowRight, ButtonLink } from "@/components/ui/button";
@@ -15,10 +16,18 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+
+      <TraceLink index="01" stage="SOURCE" tech={["Git", "Monorepo", "Code review"]} />
+
       <Manifesto />
+
+      <TraceLink index="02" stage="DEPENDENCIES" tech={["npm", "pip", "go mod", "SBOM"]} />
+
       <TwoPaths />
 
-      <Section id="expertise" className="border-t border-border">
+      <TraceLink index="03" stage="BUILD" tech={["GitHub Actions", "Docker", "Testes"]} />
+
+      <Section id="expertise">
         <div className="shell">
           <SectionHeading
             label="Expertise"
@@ -32,7 +41,9 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section className="border-t border-border">
+      <TraceLink index="04" stage="DEPLOY" tech={["Terraform", "Pulumi", "Argo CD", "Rollback"]} />
+
+      <Section>
         <div className="shell">
           <SectionHeading
             label="From vibe to scale"
@@ -58,7 +69,9 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section id="projetos" className="border-t border-border">
+      <TraceLink index="05" stage="RUNTIME" tech={["Kubernetes", "ECS", "Node", "Python", "Go"]} />
+
+      <Section id="projetos">
         <div className="shell">
           <SectionHeading
             label="Projetos selecionados"
@@ -72,7 +85,9 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <Section className="border-t border-border">
+      <TraceLink index="06" stage="DATA" tech={["PostgreSQL", "Redis", "Kafka", "Filas"]} />
+
+      <Section>
         <div className="shell">
           <SectionHeading
             label="Modelo de atuação"
@@ -112,6 +127,8 @@ export default function HomePage() {
           </Reveal>
         </div>
       </Section>
+
+      <TraceLink index="07" stage="OBSERVE" tech={["OpenTelemetry", "Grafana", "Datadog", "SLO"]} />
 
       <CallToAction />
     </>

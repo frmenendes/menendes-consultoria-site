@@ -4,7 +4,7 @@ import { Section } from "@/components/ui/section";
 
 export function Manifesto() {
   return (
-    <Section className="border-y border-border">
+    <Section>
       <div className="shell">
         <TextReveal
           as="h2"

@@ -11,7 +11,7 @@ export function CallToAction({
   body?: string;
 }) {
   return (
-    <Section className="border-t border-border">
+    <Section>
       <div className="shell">
         <Reveal className="edge relative overflow-hidden rounded-[--radius-panel] border border-border bg-surface/50 px-8 py-16 md:px-14 md:py-20">
           <div
