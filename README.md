@@ -55,14 +55,26 @@ npm run deploy
 O rate limit usa o **binding nativo do Workers**, configurado só no
 `wrangler.jsonc`, então não há recurso para criar na conta. Falta apenas:
 
-1. **Definir os secrets** (nunca versionados). Sem eles o site sobe e funciona,
+1. **Definir os três secrets no Worker.** Não existe configuração de variável
+   dentro do Resend: lá você só cria a API key e verifica o domínio remetente.
+   Os valores vivem como secret da Cloudflare. Sem eles o site sobe e funciona,
    mas o formulário responde 503 orientando o visitante a usar o e-mail do
-   rodapé:
+   rodapé.
+
+   | Secret            | O que é                                  | Exemplo                                          |
+   | ----------------- | ---------------------------------------- | ------------------------------------------------ |
+   | `RESEND_API_KEY`  | API key do Resend, com permissão de envio | `re_...`                                         |
+   | `CONTACT_FROM`    | Remetente, no domínio verificado no Resend | `Site MENENDES <contato@mail.menendes.com.br>`  |
+   | `CONTACT_TO`      | Caixa que recebe as mensagens            | o endereço de destino                            |
+
    ```bash
    npx wrangler secret put RESEND_API_KEY
-   npx wrangler secret put CONTACT_TO
    npx wrangler secret put CONTACT_FROM
+   npx wrangler secret put CONTACT_TO
    ```
+
+   > O `CONTACT_TO` é secret de propósito, e não uma var no `wrangler.jsonc`:
+   > este repositório é público, e o endereço de destino não precisa estar nele.
 2. Apontar o domínio `menendes.com.br` para o Worker no painel da Cloudflare.
 
 ## Estrutura

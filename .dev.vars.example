@@ -3,4 +3,4 @@
 
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
 CONTACT_FROM=Site MENENDES <contato@mail.menendes.com.br>
-CONTACT_TO=contato@menendes.com.br
+CONTACT_TO=destinatario@exemplo.com
