@@ -29,21 +29,21 @@ export function CosmicBackdrop() {
         className="absolute -top-[10%] left-[55%] h-[70vh] w-[80vw] -translate-x-1/2"
         style={{
           background:
-            "radial-gradient(ellipse at center, color-mix(in oklab, var(--color-primary) 20%, transparent) 0%, transparent 65%)",
+            "radial-gradient(ellipse at center in oklab, color-mix(in oklab, var(--color-primary) 20%, transparent) 0%, transparent 65%)",
         }}
       />
       <div
         className="absolute top-[28%] -left-[15%] h-[60vh] w-[70vw]"
         style={{
           background:
-            "radial-gradient(ellipse at center, color-mix(in oklab, var(--color-accent) 16%, transparent) 0%, transparent 62%)",
+            "radial-gradient(ellipse at center in oklab, color-mix(in oklab, var(--color-accent) 16%, transparent) 0%, transparent 62%)",
         }}
       />
       <div
         className="absolute top-[62%] left-[60%] h-[65vh] w-[75vw]"
         style={{
           background:
-            "radial-gradient(ellipse at center, color-mix(in oklab, var(--color-nebula) 13%, transparent) 0%, transparent 60%)",
+            "radial-gradient(ellipse at center in oklab, color-mix(in oklab, var(--color-nebula) 13%, transparent) 0%, transparent 60%)",
         }}
       />
     </div>
