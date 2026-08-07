@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Hero } from "@/components/sections/hero";
 import { Manifesto } from "@/components/sections/manifesto";
 import { TwoPaths } from "@/components/sections/two-paths";
+import { ScrollStack } from "@/components/sections/scroll-stack";
 import { CallToAction } from "@/components/sections/cta";
 import { CapabilityGrid } from "@/components/architecture/capability-grid";
 import { ArchitectureTransformation } from "@/components/architecture/architecture-transformation";
@@ -70,6 +71,10 @@ export default function HomePage() {
           </Reveal>
         </div>
       </Section>
+
+      <SeamGlow />
+
+      <ScrollStack />
 
       <SeamGlow />
 
