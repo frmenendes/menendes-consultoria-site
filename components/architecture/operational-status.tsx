@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { OPERATIONAL_STATUS } from "@/lib/content";
+import { useIsClient } from "@/hooks/use-consent";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
 
@@ -14,6 +16,23 @@ import { useScrolledPast } from "@/hooks/use-scrolled-past";
  *
  * Os estados são declarações de postura de engenharia, não telemetria ao vivo.
  * Nenhum número de disponibilidade é exibido, porque não haveria como comprovar.
+ *
+ * A pílula colapsada é levada ao <body> por portal, e isso não é preferência de
+ * organização: é o que a mantém funcionando.
+ *
+ * Ela é `position: fixed`, e o componente é renderizado dentro de um `Reveal`.
+ * O `Reveal` anima `transform` e usa `animation-fill-mode: both`, então mesmo
+ * depois de terminar ele conserva o valor final computado — que o navegador
+ * resolve como `matrix(1, 0, 0, 1, 0, 0)`, a identidade, e não como `none`.
+ * Qualquer transform diferente de `none`, inclusive a identidade, cria bloco de
+ * contenção para descendentes `fixed`. Medido: a pílula ficava em `top: 74`,
+ * ancorada aos 34px do `Reveal`, quando deveria estar em `939` — ou seja,
+ * desenhada em cima do próprio card, repetindo o mesmo texto duas vezes.
+ *
+ * É o terceiro elemento deste site a cair na mesma armadilha (o menu compacto e
+ * a busca foram os outros dois, cada um por um gatilho diferente: backdrop-
+ * filter num caso, transform de animação neste). Portal é a única solução que
+ * não depende de auditar todos os ancestrais para sempre.
  */
 export function OperationalStatus() {
   const reduced = useReducedMotion();
@@ -55,6 +74,25 @@ export function OperationalStatus() {
 
       {/* Estado colapsado. aria-hidden porque repete a lista acima, que
           permanece no DOM: leitor de tela não deve ouvir duas vezes. */}
+      <PilulaColapsada collapsed={collapsed} current={current} />
+    </>
+  );
+}
+
+function PilulaColapsada({
+  collapsed,
+  current,
+}: {
+  collapsed: boolean;
+  current: (typeof OPERATIONAL_STATUS)[number] | undefined;
+}) {
+  // Portal só depois de montar: no servidor não há `document`, e renderizar o
+  // mesmo nó nos dois lados quebraria a hidratação.
+  const isClient = useIsClient();
+  if (!isClient) return null;
+
+  return createPortal(
+    (
       <div
         aria-hidden="true"
         className={`fixed bottom-5 left-1/2 z-40 -translate-x-1/2 transition-[opacity,transform] duration-500 ${
@@ -73,7 +111,8 @@ export function OperationalStatus() {
           </span>
         </div>
       </div>
-    </>
+    ),
+    document.body,
   );
 }
 
