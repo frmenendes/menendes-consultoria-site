@@ -82,9 +82,14 @@ const byId = new Map(NODES.map((node) => [node.id, node]));
 const MAX_STEP = Math.max(...NODES.map((node) => node.step));
 
 /**
- * O viewBox é deliberadamente largo (200x100). Com `slice`, o fator de escala é
- * o maior entre largura/200 e altura/100, então um viewBox quadrado ampliaria
- * demais em tela wide e os nós virariam bolas gigantes competindo com o título.
+ * O viewBox é largo (200x100) porque o grafo é horizontal: entra pela borda à
+ * esquerda e termina em dados e integrações à direita.
+ *
+ * O `preserveAspectRatio` é `meet`, não `slice`: com `slice` o SVG cobre a área
+ * e corta o que não cabe, o que deixava metade dos nós fora da tela e fazia as
+ * legendas restantes parecerem palavras soltas. Com `meet` o grafo inteiro cabe
+ * e volta a ser lido como uma arquitetura conectada.
+ *
  * As coordenadas continuam sendo percentuais, e `sx` faz a conversão.
  */
 const VIEW_W = 200;
@@ -182,8 +187,8 @@ export function SystemTopology() {
     >
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-        preserveAspectRatio="xMidYMid slice"
-        className="h-full w-full"
+        preserveAspectRatio="xMidYMid meet"
+        className="h-full w-full overflow-visible"
       >
         <defs>
           <radialGradient id="topology-glow" cx="50%" cy="50%" r="50%">
@@ -192,9 +197,9 @@ export function SystemTopology() {
           </radialGradient>
         </defs>
 
-        <ellipse cx={sx(58)} cy="50" rx={sx(46)} ry="42" fill="url(#topology-glow)" />
+        <ellipse cx={sx(50)} cy="50" rx={sx(48)} ry="46" fill="url(#topology-glow)" />
 
-        <g ref={layerRef} style={{ willChange: "transform", opacity: 0.85 }}>
+        <g ref={layerRef} style={{ willChange: "transform" }}>
           {EDGES.map(([fromId, toId, hot]) => {
             const from = byId.get(fromId);
             const to = byId.get(toId);
@@ -212,7 +217,7 @@ export function SystemTopology() {
                   y2={to.y}
                   stroke={hot ? "var(--color-primary)" : "var(--color-border-strong)"}
                   strokeWidth={hot ? 0.28 : 0.2}
-                  strokeOpacity={visible ? (hot ? 0.55 : 0.4) : 0}
+                  strokeOpacity={visible ? (hot ? 0.7 : 0.5) : 0}
                   strokeDasharray={length}
                   strokeDashoffset={visible ? 0 : length}
                   style={{
@@ -270,12 +275,12 @@ export function SystemTopology() {
                 />
                 <text
                   x={cx}
-                  y={node.y - 3.4}
+                  y={node.y - 3.6}
                   textAnchor="middle"
-                  fill="var(--color-faint)"
-                  fontSize="1.7"
+                  fill="var(--color-muted)"
+                  fontSize="2.9"
                   fontFamily="var(--font-mono)"
-                  letterSpacing="0.08"
+                  letterSpacing="0.1"
                 >
                   {node.label}
                 </text>

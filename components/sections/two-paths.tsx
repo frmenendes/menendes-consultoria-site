@@ -88,7 +88,12 @@ export function TwoPaths() {
 function PathSurface({ variant, active }: { variant: Path["id"]; active: boolean }) {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <svg viewBox="0 0 200 160" className="absolute -top-6 right-0 h-64 w-full opacity-70">
+      {/* Confinada ao canto superior direito e esmaecida para baixo. Ocupando a
+          largura toda, a decoração caía em cima do título e do texto do card. */}
+      <svg
+        viewBox="0 0 200 160"
+        className="absolute -top-4 right-0 h-56 w-[62%] opacity-50 [mask-image:linear-gradient(to_bottom,#000_35%,transparent_100%)]"
+      >
         {variant === "empresas"
           ? // Camadas empilhadas: governança, plataforma, aplicação.
             [0, 1, 2, 3].map((row) => (

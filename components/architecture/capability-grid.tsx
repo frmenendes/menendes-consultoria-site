@@ -78,9 +78,10 @@ function CapabilityCard({ capability }: { capability: Capability }) {
         </div>
       </div>
 
-      {/* mt-auto ancora a lista no rodapé: com auto-rows-fr as linhas têm altura
-          igual, e sem isso os cards mais curtos ficariam com um vão solto. */}
-      <ul className="relative mt-auto flex flex-wrap gap-x-3 gap-y-1.5 border-t border-border-soft pt-4">
+      {/* Conteúdo alinhado ao topo. Com mt-auto a lista ia para o rodapé e abria
+          um vão no meio do card, já que auto-rows-fr iguala a altura das linhas.
+          Sobra no fim do card é leitura normal; sobra no meio parece defeito. */}
+      <ul className="relative mt-5 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-border-soft pt-4">
         {capability.items.map((item) => (
           <li key={item} className="font-mono text-[0.6875rem] text-faint">
             {item}

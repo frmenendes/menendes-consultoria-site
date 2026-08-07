@@ -28,7 +28,9 @@ export function SiteHeader() {
         scrolled && "border-b border-border bg-bg/80 backdrop-blur-md",
       )}
     >
-      <div className="shell flex h-full items-center gap-8">
+      {/* justify-between com a navegação centralizada em absoluto: com o menu no
+          fluxo, ele encostava no botão e deixava um vão grande depois da marca. */}
+      <div className="shell relative flex h-full items-center justify-between gap-6">
         <Link
           href="/"
           className="font-display text-[0.9375rem] font-bold tracking-[0.22em] text-fg"
@@ -37,7 +39,10 @@ export function SiteHeader() {
           {SITE.name}
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-7 lg:flex" aria-label="Principal">
+        <nav
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex"
+          aria-label="Principal"
+        >
           {NAV.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
@@ -56,7 +61,7 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 lg:ml-0">
+        <div className="flex items-center gap-3">
           <CommandPalette />
           <ButtonLink href={PRIMARY_CTA.href} size="sm" className="hidden sm:inline-flex">
             {PRIMARY_CTA.label}
