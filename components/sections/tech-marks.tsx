@@ -1,12 +1,24 @@
 import {
   siArgo,
+  siCloudflare,
   siDocker,
   siGithub,
+  siGitlab,
   siGooglecloud,
   siGrafana,
   siKubernetes,
+  siLinux,
+  siMongodb,
+  siMysql,
+  siNextdotjs,
+  siNodedotjs,
   siPostgresql,
+  siPython,
+  siRancher,
+  siReact,
   siRedis,
+  siSentry,
+  siSupabase,
   siTerraform,
 } from "simple-icons";
 
@@ -42,16 +54,38 @@ import {
  * nada de `simple-icons` chega ao navegador.
  */
 
+/**
+ * A ordem é por natureza, não alfabética nem aleatória: plataforma, entrega,
+ * dados, observabilidade, aplicação. Quem passa o olho lê um percurso — de
+ * onde o sistema roda até o que se constrói em cima —, e não um amontoado.
+ */
 const MARCAS = [
+  // plataforma e execução
+  siLinux,
   siKubernetes,
   siDocker,
+  siRancher,
+  siGooglecloud,
+  siCloudflare,
+  // entrega e automação
   siTerraform,
   siArgo,
-  siGooglecloud,
-  siPostgresql,
-  siRedis,
-  siGrafana,
   siGithub,
+  siGitlab,
+  // dados
+  siPostgresql,
+  siMysql,
+  siMongodb,
+  siRedis,
+  siSupabase,
+  // observabilidade
+  siGrafana,
+  siSentry,
+  // aplicação
+  siNodedotjs,
+  siReact,
+  siNextdotjs,
+  siPython,
 ] as const;
 
 export function TechMarks() {

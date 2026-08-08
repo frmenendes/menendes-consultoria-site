@@ -395,10 +395,19 @@
     animation: hud-sweep 9s linear infinite;
   }
 
-  /* A duração é longa de propósito: a faixa é ambiente, não chamada de
-     atenção. Pausa no cursor para dar tempo de ler uma marca específica. */
+  /* A duração é calibrada pela VELOCIDADE, não escolhida por gosto: o que o
+     olho percebe é px/s, e o percurso por volta é a largura de uma cópia. Com
+     22 marcas a cópia mede ~2123px, então 106s dão ~20px/s — o mesmo ritmo que
+     a faixa tinha com 9 marcas em 48s. Deixar a duração fixa ao acrescentar
+     marcas acelera a faixa sem que ninguém perceba o porquê: aos 48s com 19
+     marcas ela já ia a 38px/s, quase o dobro.
+
+     Ao mexer na lista, recalcule: duração = largura de uma cópia / 20.
+
+     Lento de propósito: a faixa é ambiente, não chamada de atenção. Pausa no
+     cursor e no foco para dar tempo de procurar uma marca específica. */
   .marquee-track {
-    animation: marquee 48s linear infinite;
+    animation: marquee 106s linear infinite;
   }
 
   .marquee:hover .marquee-track,
