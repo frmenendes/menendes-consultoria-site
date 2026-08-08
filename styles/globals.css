@@ -268,6 +268,20 @@
   }
 }
 
+/* Faixa de marcas em rolagem contínua.
+   O deslocamento é de exatamente -50% porque a trilha contém a lista DUPLICADA:
+   ao chegar em -50% o segundo conjunto está no lugar exato onde o primeiro
+   começou, e o reinício do laço é invisível. Qualquer outro valor produz um
+   salto perceptível a cada volta. */
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @keyframes star-pulse {
   from {
     opacity: 0.25;
@@ -379,6 +393,17 @@
 
   .hud-sweep {
     animation: hud-sweep 9s linear infinite;
+  }
+
+  /* A duração é longa de propósito: a faixa é ambiente, não chamada de
+     atenção. Pausa no cursor para dar tempo de ler uma marca específica. */
+  .marquee-track {
+    animation: marquee 48s linear infinite;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
   }
 
   .star-pulse {

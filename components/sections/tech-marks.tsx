@@ -65,33 +65,58 @@ export function TechMarks() {
           Tecnologias com que trabalhamos
         </h2>
 
-        <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 md:gap-x-16">
-          {MARCAS.map((marca) => (
-            <li key={marca.title}>
-              <span
-                className="group flex items-center gap-3 text-fg-soft transition-colors duration-300 hover:text-fg"
-                title={marca.title}
-              >
-                <svg
-                  role="img"
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="h-8 w-8 flex-none fill-current opacity-55 transition-opacity duration-300 group-hover:opacity-100"
-                >
-                  <path d={marca.path} />
-                </svg>
-                <span className="sr-only">{marca.title}</span>
-              </span>
-            </li>
-          ))}
+        {/* Rolagem contínua.
 
-          {/* AWS em texto, não em logo. Ver a nota no topo do arquivo. */}
-          <li>
-            <span className="font-mono text-xl font-medium tracking-[0.12em] text-fg-soft/55 transition-colors duration-300 hover:text-fg">
-              AWS
-            </span>
-          </li>
-        </ul>
+            A trilha contém a lista DUPLICADA e desliza exatamente -50%: ao
+            fim do laço o segundo conjunto ocupa a posição em que o primeiro
+            começou, então a volta é invisível. A segunda cópia é
+            `aria-hidden`, senão o leitor de tela anunciaria dez marcas vinte
+            vezes.
+
+            As bordas somem por máscara em vez de cortar reto — é a mesma regra
+            que rege o resto do site, e numa faixa que entra e sai de cena o
+            corte seco seria ainda mais evidente.
+
+            Sob `prefers-reduced-motion` a animação não existe: a trilha volta a
+            quebrar linha, a duplicata some, e as dez marcas aparecem paradas e
+            inteiras. Nada se perde. */}
+        <div
+          className="marquee relative mt-10 overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)] motion-reduce:[mask-image:none]"
+        >
+          <ul className="marquee-track flex w-max items-center motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-y-8 motion-reduce:[animation:none]">
+            {[0, 1].map((copia) => (
+              <li key={copia} aria-hidden={copia === 1 ? true : undefined}>
+                <ul className="flex items-center gap-x-12 pr-12 md:gap-x-16 md:pr-16 motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-y-8">
+                  {MARCAS.map((marca) => (
+                    <li key={marca.title}>
+                      <span
+                        className="group flex items-center gap-3 text-fg-soft transition-colors duration-300 hover:text-fg"
+                        title={marca.title}
+                      >
+                        <svg
+                          role="img"
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          className="h-8 w-8 flex-none fill-current opacity-55 transition-opacity duration-300 group-hover:opacity-100"
+                        >
+                          <path d={marca.path} />
+                        </svg>
+                        <span className="sr-only">{marca.title}</span>
+                      </span>
+                    </li>
+                  ))}
+
+                  {/* AWS em texto, não em logo. Ver a nota no topo do arquivo. */}
+                  <li>
+                    <span className="font-mono text-xl font-medium tracking-[0.12em] text-fg-soft/55 transition-colors duration-300 hover:text-fg">
+                      AWS
+                    </span>
+                  </li>
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <p className="mt-10 text-center text-[0.6875rem] text-faint">
           Marcas de seus respectivos titulares. A menção indica as tecnologias
